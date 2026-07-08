@@ -349,6 +349,27 @@
           ".thank-you",
           "[data-form-success]",
         ];
+        var thankYouUrl = "https://ebiacapacitacion.com/landings/gracias";
+        var hasRedirected = false;
+
+        function redirectToThankYou() {
+          if (hasRedirected) return;
+
+          hasRedirected = true;
+          window.setTimeout(function () {
+            window.location.assign(thankYouUrl);
+          }, 150);
+        }
+
+        function trackRegistrationSuccess() {
+          if (window.EBIAMetaPixel) {
+            window.EBIAMetaPixel.completeRegistrationOnce({
+              content_name: "IA desde cero ActiveCampaign form",
+            });
+          }
+
+          redirectToThankYou();
+        }
 
         function isVisible(element) {
           if (!element) return false;
@@ -373,11 +394,22 @@
           if (!root) return;
 
           var trackSuccess = function () {
-            if (!detectSuccess(root) || !window.EBIAMetaPixel) return;
+            if (!detectSuccess(root)) return;
 
-            window.EBIAMetaPixel.completeRegistrationOnce({
-              content_name: "IA desde cero ActiveCampaign form",
-            });
+            trackRegistrationSuccess();
+          };
+
+          var previousCallback = window._form_callback;
+          window._form_callback = function (id) {
+            if (typeof previousCallback === "function") {
+              previousCallback(id);
+            }
+
+            window.setTimeout(function () {
+              if (detectSuccess(root)) {
+                trackRegistrationSuccess();
+              }
+            }, 0);
           };
 
           trackSuccess();

@@ -344,7 +344,7 @@
 
           <a
             class="checkout-button"
-            href="https://ebiacapacitacion.com/contacto"
+            href="#inscripcion"
             data-ebia-track="checkout"
           >
             Inscribirme ahora
@@ -360,7 +360,9 @@
         );
 
         checkoutButtons.forEach(function (button) {
-          button.addEventListener("click", function () {
+          button.addEventListener("click", function (event) {
+            event.preventDefault();
+
             if (!window.EBIAMetaPixel) return;
 
             window.EBIAMetaPixel.initiateCheckout({
