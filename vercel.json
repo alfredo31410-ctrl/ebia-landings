@@ -1,0 +1,21 @@
+{
+  "trailingSlash": true,
+  "rewrites": [
+    {
+      "source": "/ia-desde-cero/",
+      "destination": "/ia-desde-cero/index.html"
+    },
+    {
+      "source": "/reto-5-dias-ia/",
+      "destination": "/reto%205%20dias%20IA/index.html"
+    },
+    {
+      "source": "/reto-5-dias-ia/styles.css",
+      "destination": "/reto%205%20dias%20IA/styles.css"
+    },
+    {
+      "source": "/reto-5-dias-ia/assets/:path*",
+      "destination": "/reto%205%20dias%20IA/assets/:path*"
+    }
+  ]
+}
