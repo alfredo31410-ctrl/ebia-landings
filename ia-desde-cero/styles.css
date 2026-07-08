@@ -479,6 +479,27 @@ h1 span {
   backdrop-filter: blur(10px);
 }
 
+.hero-stage::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 1%;
+  bottom: 16px;
+  width: min(95%, 760px);
+  height: 330px;
+  border-radius: 42px;
+  background:
+    linear-gradient(180deg, rgba(5, 8, 22, 0.08), rgba(5, 8, 22, 0.9)),
+    linear-gradient(rgba(103, 232, 249, 0.27) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 232, 249, 0.22) 1px, transparent 1px),
+    radial-gradient(circle at 64% 12%, rgba(163, 230, 53, 0.22), transparent 48%);
+  background-size: auto, 34px 34px, 34px 34px, auto;
+  box-shadow:
+    0 34px 86px rgba(2, 6, 23, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
 .hero-glow {
   position: absolute;
   z-index: 1;
