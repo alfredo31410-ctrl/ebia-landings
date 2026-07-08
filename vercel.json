@@ -6,6 +6,18 @@
       "destination": "/ia-desde-cero/index.html"
     },
     {
+      "source": "/ia-desde-cero/gracias/",
+      "destination": "/ia-desde-cero/gracias/index.html"
+    },
+    {
+      "source": "/ia-desde-cero/styles.css",
+      "destination": "/ia-desde-cero/styles.css"
+    },
+    {
+      "source": "/ia-desde-cero/assets/:path*",
+      "destination": "/ia-desde-cero/assets/:path*"
+    },
+    {
       "source": "/reto-5-dias-ia/",
       "destination": "/reto%205%20dias%20IA/index.html"
     },
