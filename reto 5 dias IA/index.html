@@ -22,9 +22,103 @@
     />
 
     <link rel="stylesheet" href="./styles.css?v=20260707-2" />
+
+    <script>
+      (function () {
+        var pixelId = "1928404584468392";
+
+        function runFbq() {
+          if (typeof window.fbq === "function") {
+            window.fbq.apply(window, arguments);
+          }
+        }
+
+        if (!window.__EBIA_META_PIXEL_SCRIPT_LOADED__) {
+          !(function (f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function () {
+              n.callMethod
+                ? n.callMethod.apply(n, arguments)
+                : n.queue.push(arguments);
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = true;
+            n.version = "2.0";
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = true;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s);
+          })(
+            window,
+            document,
+            "script",
+            "https://connect.facebook.net/en_US/fbevents.js"
+          );
+
+          window.__EBIA_META_PIXEL_SCRIPT_LOADED__ = true;
+        }
+
+        if (!window.__EBIA_META_PIXEL_INITIALIZED__) {
+          runFbq("init", pixelId);
+          window.__EBIA_META_PIXEL_INITIALIZED__ = true;
+        }
+
+        if (!window.__EBIA_META_PIXEL_PAGEVIEW_TRACKED__) {
+          runFbq("track", "PageView");
+          window.__EBIA_META_PIXEL_PAGEVIEW_TRACKED__ = true;
+        }
+
+        window.EBIAMetaPixel = {
+          pageView: function (params) {
+            runFbq("track", "PageView", params);
+          },
+          lead: function (params) {
+            runFbq("track", "Lead", params);
+          },
+          completeRegistration: function (params) {
+            runFbq("track", "CompleteRegistration", params);
+          },
+          initiateCheckout: function (params) {
+            runFbq("track", "InitiateCheckout", params);
+          },
+          purchase: function (params) {
+            runFbq("track", "Purchase", params);
+          },
+          whatsappClick: function (params) {
+            runFbq("trackCustom", "WhatsAppClick", params);
+          },
+          completeRegistrationOnce: function (params, key) {
+            var storageKey = key || "ebia_complete_registration_tracked";
+
+            try {
+              if (window.sessionStorage.getItem(storageKey)) return;
+              window.sessionStorage.setItem(storageKey, "1");
+            } catch (error) {
+              if (window[storageKey]) return;
+              window[storageKey] = true;
+            }
+
+            runFbq("track", "CompleteRegistration", params);
+          },
+        };
+      })();
+    </script>
   </head>
 
   <body>
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=1928404584468392&ev=PageView&noscript=1"
+        alt=""
+      />
+    </noscript>
+
     <aside class="sticky-bar" aria-label="Datos principales del reto">
       <span>Inteligencia Artificial: de no saber nada a crack en 5 días</span>
       <strong>27 al 31 de julio</strong>
@@ -251,11 +345,32 @@
           <a
             class="checkout-button"
             href="https://ebiacapacitacion.com/contacto"
+            data-ebia-track="checkout"
           >
             Inscribirme ahora
           </a>
         </div>
       </section>
     </main>
+
+    <script>
+      (function () {
+        var checkoutButtons = document.querySelectorAll(
+          '[data-ebia-track="checkout"]'
+        );
+
+        checkoutButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            if (!window.EBIAMetaPixel) return;
+
+            window.EBIAMetaPixel.initiateCheckout({
+              content_name: "Reto 5 dias IA",
+              value: 190,
+              currency: "MXN",
+            });
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
