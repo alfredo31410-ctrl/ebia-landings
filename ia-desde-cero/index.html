@@ -351,6 +351,7 @@
         ];
         var thankYouUrl = "https://ebiacapacitacion.com/landings/gracias";
         var hasRedirected = false;
+        var hasTrackedLead = false;
 
         function redirectToThankYou() {
           if (hasRedirected) return;
@@ -362,8 +363,9 @@
         }
 
         function trackRegistrationSuccess() {
-          if (window.EBIAMetaPixel) {
-            window.EBIAMetaPixel.completeRegistrationOnce({
+          if (!hasTrackedLead && window.EBIAMetaPixel) {
+            hasTrackedLead = true;
+            window.EBIAMetaPixel.lead({
               content_name: "IA desde cero ActiveCampaign form",
             });
           }
