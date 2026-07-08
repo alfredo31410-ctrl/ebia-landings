@@ -306,6 +306,128 @@
       src="https://cefincapacitacion.activehosted.com/f/embed.php?id=273"
       charset="utf-8"
     ></script>
+<script>
+  (function () {
+    var leadTracked = false;
+    var formRootSelector = "._form_273";
+
+    function normalizeText(value) {
+      return (value || "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function isVisible(element) {
+      if (!element) return false;
+
+      var style = window.getComputedStyle(element);
+
+      return (
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        element.getClientRects().length > 0
+      );
+    }
+
+    function isFinalSubmitButton(button) {
+      var buttonText = normalizeText(button.innerText || button.value || "");
+
+      return buttonText.includes("registrarme gratis");
+    }
+
+    function formLooksReady(root, form) {
+      if (form && typeof form.checkValidity === "function") {
+        if (!form.checkValidity()) {
+          return false;
+        }
+      }
+
+      var emailInput = root.querySelector(
+        'input[type="email"], input[name="email"]'
+      );
+
+      if (emailInput && !emailInput.value.trim()) {
+        return false;
+      }
+
+      var visibleCheckboxes = Array.prototype.filter.call(
+        root.querySelectorAll('input[type="checkbox"]'),
+        isVisible
+      );
+
+      var requiredCheckbox = visibleCheckboxes[0];
+
+      if (requiredCheckbox && !requiredCheckbox.checked) {
+        return false;
+      }
+
+      return true;
+    }
+
+    function trackLead(trigger) {
+      if (leadTracked) return;
+
+      leadTracked = true;
+
+      var params = {
+        content_name: "IA desde cero - formulario ActiveCampaign",
+        content_category: "Clase gratuita EBIA",
+        event_source: trigger,
+        page_path: window.location.pathname,
+      };
+
+      if (
+        window.EBIAMetaPixel &&
+        typeof window.EBIAMetaPixel.lead === "function"
+      ) {
+        window.EBIAMetaPixel.lead(params);
+        return;
+      }
+
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "Lead", params);
+      }
+    }
+
+    document.addEventListener(
+      "click",
+      function (event) {
+        var button = event.target.closest('button, input[type="submit"]');
+
+        if (!button) return;
+        if (!isFinalSubmitButton(button)) return;
+
+        var root = button.closest(formRootSelector);
+
+        if (!root) return;
+
+        var form = button.closest("form");
+
+        if (!formLooksReady(root, form)) return;
+
+        trackLead("activecampaign_submit_button");
+      },
+      true
+    );
+
+    document.addEventListener(
+      "submit",
+      function (event) {
+        var form = event.target;
+        var root = form.closest(formRootSelector);
+
+        if (!root) return;
+        if (!formLooksReady(root, form)) return;
+
+        trackLead("activecampaign_form_submit");
+      },
+      true
+    );
+  })();
+</script>
 
     <script>
       const modal = document.querySelector("#registro-form");
