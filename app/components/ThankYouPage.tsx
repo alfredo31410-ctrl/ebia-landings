@@ -3,31 +3,25 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import type { LandingCampaign } from "@/lib/landings";
+import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
 import styles from "./ThankYouPage.module.css";
-
-const trackEvent = (event: string, slug?: string) => {
-  if (typeof window === "undefined") return;
-  try {
-    const analyticsWindow = window as typeof window & {
-      fbq?: (command: string, event: string, data?: Record<string, string>) => void;
-      gtag?: (command: string, event: string, data: { campaign?: string }) => void;
-    };
-    analyticsWindow.fbq?.("track", "Lead", { content_name: slug || "EBIA landing" });
-    analyticsWindow.gtag?.("event", event, { campaign: slug });
-  } catch {
-    // Analytics must never block the confirmation flow.
-  }
-};
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_GROUP_URL ||
   "https://chat.whatsapp.com/IoQGp5ptv70CHR1CwQUJZD";
 
 export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
-  useEffect(
-    () => trackEvent("complete_registration", campaign.slug),
-    [campaign.slug],
-  );
+  useEffect(() => trackMetaEventWhenReady(
+    "CompleteRegistration",
+    campaign.slug,
+    {
+      content_name: campaign.integrations.metaContentName,
+      content_category: "Registro ActiveCampaign",
+      status: "completed",
+      value: 0,
+      currency: "MXN",
+    },
+  ), [campaign.integrations.metaContentName, campaign.slug]);
 
   return (
     <main className={styles.page} data-campaign={campaign.slug}>

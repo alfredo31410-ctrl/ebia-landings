@@ -20,7 +20,13 @@ export function ActiveCampaignForm({ formId, campaign, metaContentName, thankYou
       const visible = style.display !== "none" && style.visibility !== "hidden" && success.getClientRects().length > 0;
       if (handled.current || !visible) return;
       handled.current = true;
-      trackMetaEvent("Lead", campaign, { content_name: metaContentName, content_category: "Formulario ActiveCampaign", value: 0, currency: "MXN" });
+      trackMetaEvent("CompleteRegistration", campaign, {
+        content_name: metaContentName,
+        content_category: "Formulario ActiveCampaign",
+        status: "completed",
+        value: 0,
+        currency: "MXN",
+      });
       window.setTimeout(() => window.location.assign(thankYouPath), 150);
     };
     const observer = new MutationObserver(checkSuccess);

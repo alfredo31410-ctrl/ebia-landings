@@ -1,11 +1,11 @@
-export type MetaStandardEvent = "ViewContent" | "Lead" | "CompleteRegistration";
+export type MetaStandardEvent = "ViewContent" | "CompleteRegistration";
 export type MetaCustomEvent = "RegistrationStart" | "WhatsAppGroupClick";
 export type MetaEvent = MetaStandardEvent | MetaCustomEvent;
 export type MetaEventParams = Record<string, string | number | boolean | undefined>;
 export type DedupeScope = "persistent" | "session" | "none";
 
 const STORAGE_PREFIX = "ebia:meta:v1";
-const STANDARD_EVENTS = new Set<MetaEvent>(["ViewContent", "Lead", "CompleteRegistration"]);
+const STANDARD_EVENTS = new Set<MetaEvent>(["ViewContent", "CompleteRegistration"]);
 
 function storageFor(scope: DedupeScope): Storage | null {
   if (typeof window === "undefined" || scope === "none") return null;
