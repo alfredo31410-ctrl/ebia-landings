@@ -34,7 +34,16 @@ export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
       <div className={styles.backdrop} aria-hidden="true" />
       <section className={styles.shell}>
         <a className={styles.logo} href="https://ebiacapacitacion.com/" aria-label="Volver a EBIA">
-          <span>e</span><strong>EBIA</strong>
+          <span className={styles.logoCrop}>
+            <Image
+              src="/logos/Logo1.png"
+              alt="EBIA, Escuela Básica de Inteligencia Artificial"
+              width={1080}
+              height={1080}
+              className={styles.logoImage}
+              priority
+            />
+          </span>
         </a>
 
         <div className={styles.grid}>
@@ -66,24 +75,26 @@ export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
               <WhatsAppIcon /> Unirme al grupo
             </a>
           </div>
-
-          <div className={styles.visual}>
+        </div>
+        <div className={styles.visual}>
+          <div className={styles.visualBrand}>
+            <span>e</span><strong>EBIA</strong>
+          </div>
+          <div className={styles.visualMedia}>
             <Image
-              src="/landings/media/ia-desde-cero/Foto1.png"
+              src="/ia-desde-cero/Foto2.png"
               alt={campaign.image.alt}
               width={1067}
               height={1600}
+              sizes="(max-width: 560px) 92vw, (max-width: 980px) 70vw, 46vw"
+              className={styles.visualImage}
               priority
             />
-            <div className={styles.visualBadge}>
-              <CheckIcon /><span>Registro guardado en EBIA</span>
-            </div>
+          </div>
+          <div className={styles.visualBadge}>
+            <CheckIcon /><span>Registro guardado en EBIA</span>
           </div>
         </div>
-
-        <a href={`/landings/${campaign.slug}`} className={styles.backLink}>
-          <ArrowIcon /> Volver a la clase
-        </a>
       </section>
     </main>
   );
@@ -97,7 +108,4 @@ function WhatsAppIcon() {
 }
 function CheckIcon() {
   return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.6L16.5 9"/></svg>;
-}
-function ArrowIcon() {
-  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>;
 }

@@ -1,35 +1,274 @@
-.page { position:relative; min-height:100vh; overflow:hidden; background:radial-gradient(circle at 15% 10%,rgba(91,61,245,.2),transparent 30%),radial-gradient(circle at 88% 20%,rgba(245,165,36,.18),transparent 28%),linear-gradient(135deg,#f8fbff 0%,#eef3ff 42%,#132b69 100%); color:#111827; font-family:Inter,system-ui,sans-serif; }
-.backdrop { position:absolute; inset:0; background-image:linear-gradient(rgba(91,61,245,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(91,61,245,.08) 1px,transparent 1px); background-size:42px 42px; mask-image:linear-gradient(180deg,#000 0%,transparent 82%); }
-.shell { position:relative; z-index:1; display:flex; min-height:100vh; flex-direction:column; justify-content:center; max-width:1200px; margin:0 auto; padding:42px 22px; }
-.logo { position:absolute; top:34px; left:22px; display:inline-flex; align-items:center; gap:10px; color:#111827; text-decoration:none; }
-.logo span { display:grid; width:42px; height:42px; place-items:center; border-radius:14px; background:linear-gradient(135deg,#5b3df5,#8b5cf6,#f5a524); color:#fff; font-size:20px; font-weight:900; box-shadow:0 18px 34px rgba(91,61,245,.26); }
-.logo strong { font-size:22px; letter-spacing:-.02em; }
-.grid { display:grid; grid-template-columns:minmax(0,.95fr) minmax(330px,.78fr); gap:28px 54px; align-items:end; }
-.copy { grid-column:1; align-self:center; padding-top:74px; }
-.kicker { margin:0 0 18px; color:#5b3df5; font-size:14px; font-weight:900; letter-spacing:.18em; text-transform:uppercase; }
-.copy h1 { max-width:620px; margin:0; font-size:clamp(54px,8vw,96px); font-weight:900; line-height:.95; letter-spacing:0; }
-.copy h1 span { display:block; color:#5b3df5; text-shadow:0 4px 0 rgba(255,255,255,.9); }
-.subtitle { max-width:700px; margin:24px 0 0; color:#334155; font-size:clamp(20px,2.4vw,29px); font-weight:900; line-height:1.35; text-transform:uppercase; }
-.card { grid-column:1; width:min(100%,580px); border:1px solid rgba(91,61,245,.26); border-radius:18px; background:rgba(16,31,82,.92); padding:clamp(24px,3vw,34px); color:#fff; box-shadow:0 28px 70px rgba(12,30,82,.26); backdrop-filter:blur(18px); }
-.cardHeader { display:flex; align-items:center; gap:10px; margin-bottom:22px; color:#c7d2fe; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
-.cardHeader svg { width:22px; color:#f5a524; stroke:currentColor; stroke-width:1.8; }
-.progressBox { border-radius:10px; background:#f8fafc; padding:16px; color:#111827; }
-.progressLabel { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; font-weight:900; }
-.progressLabel span { color:#5b3df5; font-size:22px; }
-.progressTrack { height:18px; overflow:hidden; border-radius:999px; background:#dbeafe; }
-.progressFill { width:80%; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22c55e,#5b3df5); }
-.card h2 { margin:24px 0 10px; font-size:clamp(34px,4vw,48px); line-height:1.04; }
-.card p { margin:0 0 20px; color:#e0e7ff; font-size:19px; font-weight:800; line-height:1.45; }
-.whatsappButton { display:flex; min-height:72px; align-items:center; justify-content:center; gap:13px; border-radius:14px; background:#22c55e; color:#fff; font-size:20px; font-weight:900; text-decoration:none; text-transform:uppercase; box-shadow:0 16px 0 rgba(15,118,110,.35),0 22px 38px rgba(34,197,94,.25); transition:transform .18s ease,background .18s ease; }
-.whatsappButton:hover { background:#16a34a; transform:translateY(-2px); }
-.whatsappButton svg { width:28px; height:28px; }
-.visual { position:relative; grid-column:2; grid-row:1/span 2; align-self:end; }
-.visual>img { width:100%; min-height:580px; border-radius:28px; object-fit:cover; object-position:center top; box-shadow:0 32px 80px rgba(15,23,42,.3); }
-.visual::after { content:""; position:absolute; inset:0; border-radius:28px; background:linear-gradient(180deg,transparent 45%,rgba(19,43,105,.55)); }
-.visualBadge { position:absolute; right:24px; bottom:24px; z-index:1; display:flex; align-items:center; gap:10px; border-radius:14px; background:rgba(255,255,255,.88); padding:14px 16px; color:#172554; font-weight:900; box-shadow:0 18px 40px rgba(15,23,42,.22); backdrop-filter:blur(12px); }
-.visualBadge svg { width:22px; height:22px; color:#22c55e; stroke:currentColor; stroke-width:2; }
-.backLink { display:inline-flex; align-items:center; gap:8px; width:fit-content; margin-top:28px; color:#334155; font-weight:800; text-decoration:none; }
-.backLink svg { width:18px; height:18px; stroke:currentColor; stroke-width:2; }
-@media(max-width:920px){.shell{justify-content:flex-start;padding-top:96px}.grid{grid-template-columns:1fr}.copy,.card,.visual{grid-column:1}.copy{padding-top:0}.visual{grid-row:auto}.visual>img{min-height:320px;max-height:540px}}
-@media(max-width:560px){.shell{padding-inline:16px}.logo{left:16px}.copy h1{font-size:46px}.subtitle{font-size:18px}.card{padding:20px}.whatsappButton{min-height:62px;font-size:16px}.visualBadge{right:12px;bottom:12px}}
-@media(prefers-reduced-motion:reduce){.whatsappButton{transition:none}}
+.page {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 82% 20%, rgba(91, 61, 245, .15), transparent 29%),
+    radial-gradient(circle at 70% 82%, rgba(27, 199, 176, .14), transparent 25%),
+    linear-gradient(135deg, #fbfdff 0%, #f2f5ff 48%, #e7edff 100%);
+  color: #111827;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(91, 61, 245, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91, 61, 245, .05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, .8) 55%, transparent 92%);
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(360px, .98fr);
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(28px, 5vw, 78px);
+  width: min(1240px, calc(100% - 56px));
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 22px 0 44px;
+}
+
+.logo {
+  position: relative;
+  z-index: 5;
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: block;
+  width: clamp(164px, 16vw, 208px);
+  height: 76px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logoCrop {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.logoImage {
+  position: absolute;
+  width: 270px;
+  height: 270px;
+  max-width: none;
+  left: 50%;
+  top: 50%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+
+.grid {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: center;
+  display: grid;
+  gap: 26px;
+  max-width: 660px;
+  padding: 24px 0 28px;
+}
+
+.kicker {
+  margin: 0 0 16px;
+  color: #5b3df5;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.copy h1 {
+  max-width: 640px;
+  margin: 0;
+  font-size: clamp(50px, 5.8vw, 82px);
+  font-weight: 900;
+  line-height: .94;
+  letter-spacing: -.055em;
+}
+
+.copy h1 span {
+  display: block;
+  color: #5b3df5;
+}
+
+.subtitle {
+  max-width: 610px;
+  margin: 22px 0 0;
+  color: #334155;
+  font-size: clamp(17px, 1.7vw, 21px);
+  font-weight: 750;
+  line-height: 1.48;
+}
+
+.card {
+  width: 100%;
+  max-width: 620px;
+  border: 1px solid rgba(255, 255, 255, .6);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(15, 23, 60, .97), rgba(31, 38, 82, .94));
+  padding: clamp(22px, 2.7vw, 32px);
+  color: #fff;
+  box-shadow: 0 26px 70px rgba(12, 30, 82, .23);
+  backdrop-filter: blur(18px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  color: #c7d2fe;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.cardHeader svg { width: 21px; color: #f5a524; stroke: currentColor; stroke-width: 1.8; }
+.progressBox { border-radius: 15px; background: #f8fafc; padding: 14px; color: #111827; }
+.progressLabel { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 11px; font-size: 14px; font-weight: 900; }
+.progressLabel span { color: #5b3df5; font-size: 20px; }
+.progressTrack { height: 14px; overflow: hidden; border-radius: 999px; background: #dbeafe; }
+.progressFill { width: 80%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #20c878, #5b3df5); }
+.card h2 { margin: 20px 0 8px; font-size: clamp(28px, 3vw, 38px); line-height: 1.06; }
+.card p { margin: 0 0 18px; color: #e0e7ff; font-size: clamp(16px, 1.45vw, 18px); font-weight: 700; line-height: 1.45; }
+
+.whatsappButton {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 14px;
+  background: #20bd6a;
+  color: #fff;
+  font-size: clamp(16px, 1.6vw, 19px);
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 12px 0 rgba(11, 117, 73, .32), 0 20px 34px rgba(34, 197, 94, .2);
+  transition: transform .18s ease, background .18s ease;
+}
+.whatsappButton:hover { background: #16a34a; transform: translateY(-2px); }
+.whatsappButton:focus-visible { outline: 3px solid #f5a524; outline-offset: 4px; }
+.whatsappButton svg { width: 27px; height: 27px; }
+
+.visual {
+  position: relative;
+  grid-column: 2;
+  grid-row: 2;
+  align-self: stretch;
+  min-height: 660px;
+  isolation: isolate;
+}
+
+.visual::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: min(42vw, 520px);
+  aspect-ratio: 1;
+  left: 50%;
+  bottom: 6%;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(91, 61, 245, .2), rgba(27, 199, 176, .22));
+  filter: blur(1px);
+  transform: translateX(-50%);
+}
+
+.visual::after {
+  content: none;
+}
+
+.visualMedia { position: absolute; inset: -8% -8% -2%; display: grid; place-items: end center; }
+.visualImage {
+  display: block;
+  width: auto;
+  height: min(88svh, 900px);
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 30px 30px rgba(15, 23, 42, .18));
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, rgba(0, 0, 0, .92) 84%, rgba(0, 0, 0, .42) 93%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 78%, rgba(0, 0, 0, .92) 84%, rgba(0, 0, 0, .42) 93%, transparent 100%);
+}
+
+.visualBrand { display: none; }
+.visualBadge {
+  position: absolute;
+  right: 2%;
+  bottom: 8%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, .7);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .88);
+  padding: 13px 15px;
+  color: #172554;
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, .15);
+  backdrop-filter: blur(14px);
+}
+.visualBadge svg { width: 21px; height: 21px; color: #20bd6a; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 980px) {
+  .page { overflow: clip; }
+  .backdrop { mask-image: linear-gradient(180deg, #000 0%, transparent 90%); }
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    width: min(720px, calc(100% - 44px));
+    padding: 16px 0 48px;
+  }
+  .logo { grid-column: 1; grid-row: 1; }
+  .grid { display: contents; }
+  .copy { grid-column: 1; grid-row: 2; padding-top: 20px; text-align: center; }
+  .copy h1, .subtitle { margin-right: auto; margin-left: auto; }
+  .visual { grid-column: 1; grid-row: 3; min-height: clamp(390px, 66vw, 540px); margin-top: 6px; }
+  .visualMedia { inset: -9% 0 -10%; }
+  .visualImage { width: min(76vw, 540px); height: auto; max-height: 610px; }
+  .visual::before { width: min(68vw, 460px); bottom: 5%; }
+  .visualBadge { right: 7%; bottom: 7%; }
+  .card { position: relative; z-index: 4; grid-column: 1; grid-row: 4; justify-self: center; margin-top: -24px; }
+}
+
+@media (max-width: 600px) {
+  .shell { width: min(100% - 28px, 720px); padding-top: 8px; }
+  .logo { width: 156px; height: 64px; }
+  .logoImage { width: 224px; height: 224px; }
+  .copy { padding-top: 12px; }
+  .kicker { margin-bottom: 12px; font-size: 11px; }
+  .copy h1 { font-size: clamp(39px, 12vw, 54px); }
+  .subtitle { margin-top: 17px; font-size: 16px; }
+  .visual { min-height: clamp(330px, 105vw, 450px); margin-top: 2px; }
+  .visualMedia { inset: -5% -8% -12%; }
+  .visualImage { width: min(98vw, 480px); max-width: none; }
+  .visual::before { width: 82vw; max-width: 390px; bottom: 4%; }
+  .visualBadge { right: 0; bottom: 4%; padding: 10px 12px; font-size: 11px; }
+  .card { margin-top: -18px; border-radius: 20px; padding: 19px 17px 23px; }
+  .card h2 { font-size: 27px; }
+  .whatsappButton { min-height: 61px; font-size: 15px; }
+}
+
+@media (max-width: 390px) {
+  .visual { min-height: 320px; }
+  .visualImage { width: 108vw; }
+  .visualBadge span { max-width: 150px; }
+}
+
+@media (min-width: 1440px) {
+  .shell { width: min(1320px, calc(100% - 80px)); }
+  .visualImage { height: min(90svh, 960px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsappButton { transition: none; }
+}
