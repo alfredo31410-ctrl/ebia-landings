@@ -21,6 +21,7 @@ export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
       value: 0,
       currency: "MXN",
     },
+    "session",
   ), [campaign.integrations.metaContentName, campaign.slug]);
 
   return (
