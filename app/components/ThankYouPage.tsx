@@ -1,26 +1,27 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect } from "react";
 import type { LandingCampaign } from "@/lib/landings";
-import { Brand } from "./Brand";
 import styles from "./ThankYouPage.module.css";
 
 const trackEvent = (event: string, slug?: string) => {
   if (typeof window === "undefined") return;
   try {
     const analyticsWindow = window as typeof window & {
+      fbq?: (command: string, event: string, data?: Record<string, string>) => void;
       gtag?: (command: string, event: string, data: { campaign?: string }) => void;
-      analytics?: { track?: (event: string, data: { campaign?: string }) => void };
     };
-    if (typeof analyticsWindow.gtag === "function") {
-      analyticsWindow.gtag("event", event, { campaign: slug });
-      return;
-    }
-    analyticsWindow.analytics?.track?.(event, { campaign: slug });
+    analyticsWindow.fbq?.("track", "Lead", { content_name: slug || "EBIA landing" });
+    analyticsWindow.gtag?.("event", event, { campaign: slug });
   } catch {
-    // Tracking must never prevent the confirmation page from rendering.
+    // Analytics must never block the confirmation flow.
   }
 };
+
+const whatsappUrl =
+  process.env.NEXT_PUBLIC_WHATSAPP_GROUP_URL ||
+  "https://ebiacapacitacion.com/contacto";
 
 export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
   useEffect(
@@ -29,42 +30,74 @@ export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
   );
 
   return (
-    <main
-      className={styles.page}
-      data-campaign={campaign.slug}
-      data-variant={campaign.variant}
-    >
-      <div className={styles.backdrop} aria-hidden="true">
-        <span className={styles.glowPrimary} />
-        <span className={styles.glowSecondary} />
-        <span className={styles.grid} />
-      </div>
+    <main className={styles.page} data-campaign={campaign.slug}>
+      <div className={styles.backdrop} aria-hidden="true" />
+      <section className={styles.shell}>
+        <a className={styles.logo} href="https://ebiacapacitacion.com/" aria-label="Volver a EBIA">
+          <span>e</span><strong>EBIA</strong>
+        </a>
 
-      <header className={styles.header}>
-        <Brand />
-      </header>
-
-      <section className={styles.container}>
-        <div className={styles.card}>
-          <div className={styles.icon} aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="m5 12.5 4.2 4.2L19 7" />
-            </svg>
+        <div className={styles.grid}>
+          <div className={styles.copy}>
+            <p className={styles.kicker}>Registro {campaign.seo.title}</p>
+            <h1>Tu registro <span>está casi</span> completo</h1>
+            <p className={styles.subtitle}>
+              Último paso obligatorio: únete al grupo de WhatsApp para recibir
+              el acceso, avisos e instrucciones de la clase.
+            </p>
           </div>
-          <p className={styles.status}>
-            <span /> Registro completado
-          </p>
-          <h1>{campaign.thanks.title}</h1>
-          <p className={styles.message}>{campaign.thanks.message}</p>
-          <a className={styles.action} href="https://ebiacapacitacion.com/">
-            {campaign.thanks.actionLabel}
-            <span aria-hidden="true">→</span>
-          </a>
-          <p className={styles.note}>
-            Si no encuentras el correo, revisa las carpetas de promociones o spam.
-          </p>
+
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <SparklesIcon /><span>Falta poco</span>
+            </div>
+            <div className={styles.progressBox}>
+              <div className={styles.progressLabel}>
+                <strong>Proceso de registro</strong><span>80%</span>
+              </div>
+              <div className={styles.progressTrack}><div className={styles.progressFill} /></div>
+            </div>
+            <h2>Ya casi terminas el proceso.</h2>
+            <p>
+              Para completar tu registro, entra al WhatsApp de EBIA. Ahí
+              recibirás instrucciones, recordatorios y el acceso cuando esté disponible.
+            </p>
+            <a className={styles.whatsappButton} href={whatsappUrl} target="_blank" rel="noreferrer">
+              <WhatsAppIcon /> Unirme al grupo
+            </a>
+          </div>
+
+          <div className={styles.visual}>
+            <Image
+              src="/landings/media/ia-desde-cero/Foto1.png"
+              alt={campaign.image.alt}
+              width={1067}
+              height={1600}
+              priority
+            />
+            <div className={styles.visualBadge}>
+              <CheckIcon /><span>Registro guardado en EBIA</span>
+            </div>
+          </div>
         </div>
+
+        <a href={`/landings/${campaign.slug}`} className={styles.backLink}>
+          <ArrowIcon /> Volver a la clase
+        </a>
       </section>
     </main>
   );
+}
+
+function SparklesIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1-4.1-1.4 4.1-1.4L12 3ZM19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Z" /></svg>;
+}
+function WhatsAppIcon() {
+  return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7c1.7.9 3.6 1.4 5.5 1.4 6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.2-3.5-8.4Zm-8.3 18.2c-1.7 0-3.4-.5-4.9-1.3l-.4-.2-3.9 1 1-3.8-.2-.4a9.7 9.7 0 1 1 8.4 4.7Zm5.3-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3 .9 4.1.8 1.3-.2 1.7-1 1.9-1.9.2-.9.2-1.6.1-1.8-.2-.1-.5-.2-.8-.3Z" /></svg>;
+}
+function CheckIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.6L16.5 9"/></svg>;
+}
+function ArrowIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>;
 }
