@@ -30,6 +30,15 @@ export function hasTrackedMetaEvent(event: MetaEvent, campaign: string, scope: D
   try { return storage.getItem(eventKey(event, campaign)) === "1"; } catch { return false; }
 }
 
+export function resetTrackedMetaEvent(event: MetaEvent, campaign: string, scope: DedupeScope = "session") {
+  const storage = storageFor(scope);
+  if (!storage) return;
+  try {
+    storage.removeItem(eventKey(event, campaign));
+    storage.removeItem(`${eventKey(event, campaign)}:event-id`);
+  } catch {}
+}
+
 export function trackMetaEvent(event: MetaEvent, campaign: string, params: MetaEventParams = {}, scope: DedupeScope = "persistent") {
   if (typeof window === "undefined" || typeof window.fbq !== "function") return false;
   const storage = storageFor(scope);
