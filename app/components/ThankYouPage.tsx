@@ -21,7 +21,7 @@ const trackEvent = (event: string, slug?: string) => {
 
 const whatsappUrl =
   process.env.NEXT_PUBLIC_WHATSAPP_GROUP_URL ||
-  "https://ebiacapacitacion.com/contacto";
+  "https://chat.whatsapp.com/IoQGp5ptv70CHR1CwQUJZD";
 
 export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
   useEffect(
@@ -36,7 +36,7 @@ export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
         <a className={styles.logo} href="https://ebiacapacitacion.com/" aria-label="Volver a EBIA">
           <span className={styles.logoCrop}>
             <Image
-              src="/logos/Logo1.png"
+              src="/landings/media/logos/Logo1.png"
               alt="EBIA, Escuela Básica de Inteligencia Artificial"
               width={1080}
               height={1080}
@@ -82,7 +82,7 @@ export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
           </div>
           <div className={styles.visualMedia}>
             <Image
-              src="/ia-desde-cero/Foto2.png"
+              src="/landings/media/ia-desde-cero/Foto2.png"
               alt={campaign.image.alt}
               width={1067}
               height={1600}
