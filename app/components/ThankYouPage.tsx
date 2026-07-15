@@ -2,48 +2,68 @@
 
 import { useEffect } from "react";
 import type { LandingCampaign } from "@/lib/landings";
-// Lightweight local fallback for tracking to avoid missing module errors
+import { Brand } from "./Brand";
+import styles from "./ThankYouPage.module.css";
+
 const trackEvent = (event: string, slug?: string) => {
   if (typeof window === "undefined") return;
   try {
-    // Prefer gtag if available
-    const anyWin = window as any;
-    if (typeof anyWin.gtag === "function") {
-      anyWin.gtag("event", event, { campaign: slug });
+    const analyticsWindow = window as typeof window & {
+      gtag?: (command: string, event: string, data: { campaign?: string }) => void;
+      analytics?: { track?: (event: string, data: { campaign?: string }) => void };
+    };
+    if (typeof analyticsWindow.gtag === "function") {
+      analyticsWindow.gtag("event", event, { campaign: slug });
       return;
     }
-    // Fallback to a generic analytics object if present
-    if (anyWin.analytics && typeof anyWin.analytics.track === "function") {
-      anyWin.analytics.track(event, { campaign: slug });
-      return;
-    }
-  } catch (e) {
-    // swallow errors in client tracking
+    analyticsWindow.analytics?.track?.(event, { campaign: slug });
+  } catch {
+    // Tracking must never prevent the confirmation page from rendering.
   }
 };
-import { Brand } from "./Brand";
 
 export function ThankYouPage({ campaign }: { campaign: LandingCampaign }) {
   useEffect(
     () => trackEvent("complete_registration", campaign.slug),
     [campaign.slug],
   );
+
   return (
-    <main className={`campaign campaign--${campaign.variant} thanks`}>
-      <section className="thanks-card">
-        <div className="thanks-icon" aria-hidden="true">
-          ✓
-        </div>
+    <main
+      className={styles.page}
+      data-campaign={campaign.slug}
+      data-variant={campaign.variant}
+    >
+      <div className={styles.backdrop} aria-hidden="true">
+        <span className={styles.glowPrimary} />
+        <span className={styles.glowSecondary} />
+        <span className={styles.grid} />
+      </div>
+
+      <header className={styles.header}>
         <Brand />
-        <h1>{campaign.thanks.title}</h1>
-        <p>{campaign.thanks.message}</p>
-        <a
-          className="button button--primary"
-          href="https://ebiacapacitacion.com/"
-        >
-          {campaign.thanks.actionLabel}
-          <span aria-hidden="true">→</span>
-        </a>
+      </header>
+
+      <section className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.icon} aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="m5 12.5 4.2 4.2L19 7" />
+            </svg>
+          </div>
+          <p className={styles.status}>
+            <span /> Registro completado
+          </p>
+          <h1>{campaign.thanks.title}</h1>
+          <p className={styles.message}>{campaign.thanks.message}</p>
+          <a className={styles.action} href="https://ebiacapacitacion.com/">
+            {campaign.thanks.actionLabel}
+            <span aria-hidden="true">→</span>
+          </a>
+          <p className={styles.note}>
+            Si no encuentras el correo, revisa las carpetas de promociones o spam.
+          </p>
+        </div>
       </section>
     </main>
   );
