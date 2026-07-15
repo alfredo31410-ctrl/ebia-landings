@@ -1,45 +1,4 @@
 {
-  "trailingSlash": true,
-  "rewrites": [
-    {
-      "source": "/ia-desde-cero",
-      "destination": "/ia-desde-cero/index.html"
-    },
-    {
-      "source": "/ia-desde-cero/",
-      "destination": "/ia-desde-cero/index.html"
-    },
-    {
-      "source": "/ia-desde-cero/gracias",
-      "destination": "/ia-desde-cero/gracias/index.html"
-    },
-    {
-      "source": "/ia-desde-cero/gracias/",
-      "destination": "/ia-desde-cero/gracias/index.html"
-    },
-    {
-      "source": "/ia-desde-cero/styles.css",
-      "destination": "/ia-desde-cero/styles.css"
-    },
-    {
-      "source": "/ia-desde-cero/assets/:path*",
-      "destination": "/ia-desde-cero/assets/:path*"
-    },
-    {
-      "source": "/reto-5-dias-ia",
-      "destination": "/reto%205%20dias%20IA/index.html"
-    },
-    {
-      "source": "/reto-5-dias-ia/",
-      "destination": "/reto%205%20dias%20IA/index.html"
-    },
-    {
-      "source": "/reto-5-dias-ia/styles.css",
-      "destination": "/reto%205%20dias%20IA/styles.css"
-    },
-    {
-      "source": "/reto-5-dias-ia/assets/:path*",
-      "destination": "/reto%205%20dias%20IA/assets/:path*"
-    }
-  ]
+  "redirects": [{ "source": "/landings", "destination": "/landings/ia-desde-cero", "permanent": false }],
+  "headers": [{ "source": "/landings/(.*)\\.(png|webp)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }]
 }
