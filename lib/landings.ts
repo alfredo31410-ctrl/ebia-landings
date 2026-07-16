@@ -45,7 +45,7 @@ export const campaigns = {
     secondaryCta: "Explorar el contenido",
     microcopy: "Registro gratuito · Cupo sujeto a disponibilidad",
     facts: [
-      { label: "Fecha", value: "15 de julio" },
+      { label: "Fecha", value: "29 de julio" },
       { label: "Horario", value: "12 a 1 PM" },
       { label: "Zona", value: "CDMX" },
       { label: "Modalidad", value: "En línea" },
