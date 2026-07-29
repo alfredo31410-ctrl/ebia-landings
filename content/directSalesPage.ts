@@ -10,27 +10,21 @@ export type DirectSalesContent = {
   mechanism: string;
   instructor: string;
   instructorRole: string;
-  price: string;
-  currency: string;
-  payment: string;
-  duration: string;
+  price: { amount: number; currency: "MXN"; paymentLabel: string };
   level: string;
-  modality: string;
-  access: string;
-  guarantee: string;
-  support: string;
-  checkoutName: string;
+  access?: string;
+  guarantee?: string;
+  support?: string;
   benefits: { title: string; text: string; outcome: string }[];
   modules: { number: string; title: string; result: string; topics: string[] }[];
   bonuses: { title: string; text: string; use: string }[];
   faqs: { question: string; answer: string }[];
 };
 
-/** Datos provisionales: sustituir cuando el producto y sus condiciones reales estén definidos. */
 export const directSalesPage: DirectSalesContent = {
   product: "Ecosistema IA desde cero",
   category: "Programa práctico",
-  eyebrow: "Aprendizaje aplicado · datos provisionales",
+  eyebrow: "Aprendizaje aplicado",
   headline: "Convierte la inteligencia artificial en una forma más clara de trabajar",
   accentHeadline: "desde tu primer proyecto",
   subheadline: "Un recorrido guiado para entender qué herramientas usar, cómo pedir mejores resultados y cómo llevar la IA a tareas reales sin perderte entre tutoriales.",
@@ -39,16 +33,8 @@ export const directSalesPage: DirectSalesContent = {
   mechanism: "Aprendes con una secuencia simple: entender el problema, elegir la herramienta, dar contexto, revisar la salida y convertirla en un proceso repetible.",
   instructor: "Equipo EBIA",
   instructorRole: "Formación digital práctica",
-  price: "$1,490",
-  currency: "MXN",
-  payment: "Pago único",
-  duration: "Acceso durante 12 meses",
+  price: { amount: 1490, currency: "MXN", paymentLabel: "Pago único" },
   level: "Inicial",
-  modality: "A tu ritmo",
-  access: "Acceso digital después del pago",
-  guarantee: "Garantía y condiciones por confirmar antes de publicar.",
-  support: "Soporte por confirmar",
-  checkoutName: "ecosistema-ia",
   benefits: [
     { title: "De la curiosidad a una tarea concreta", text: "Deja de probar herramientas al azar y parte de lo que necesitas resolver.", outcome: "Un punto de partida claro para cada uso." },
     { title: "Prompts que puedes revisar", text: "Aprende a dar contexto, pedir un formato y mejorar una respuesta paso a paso.", outcome: "Instrucciones más consistentes y útiles." },
@@ -66,9 +52,5 @@ export const directSalesPage: DirectSalesContent = {
   ],
   faqs: [
     { question: "¿Necesito experiencia previa?", answer: "No. El recorrido está planteado para comenzar desde lo esencial y avanzar con ejemplos prácticos." },
-    { question: "¿Puedo avanzar desde el móvil?", answer: "El contenido está pensado para consultarse en línea. La compatibilidad final y los requisitos de acceso deben confirmarse con los datos reales del producto." },
-    { question: "¿Cuándo recibo acceso?", answer: "La intención es entregar acceso digital después del pago, sujeto a la configuración final de Hotmart." },
-    { question: "¿Incluye soporte?", answer: "El tipo de soporte todavía está por confirmar. Esta sección debe actualizarse antes de publicar la oferta." },
-    { question: "¿Tiene garantía?", answer: "Las condiciones reales de garantía aún no están definidas. No se debe comunicar una garantía específica hasta confirmarla." },
   ],
 };
