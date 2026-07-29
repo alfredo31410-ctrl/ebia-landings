@@ -33,7 +33,7 @@ export function ThankYouPage({ campaign, registration }: { campaign: LandingCamp
 function InvalidThankYou({ campaign }: { campaign: LandingCampaign }) {
   return <main className="thanks-flow"><div className="shell thanks-container"><section className="thanks-panel" aria-labelledby="invalid-title">
     <p className="thanks-progress">RECUPERACIÓN DEL REGISTRO <span /></p><h1 id="invalid-title">Este enlace ya no es válido</h1>
-    <p className="thanks-lead">No podemos confirmar un registro desde una URL abierta directamente, expirada o reutilizada. Vuelve a la landing para iniciar el proceso.</p>
+    <p className="thanks-lead">No podemos confirmar un registro desde una URL abierta directamente, expirada o que no corresponde a un registro válido. Vuelve a la landing para iniciar el proceso.</p>
     <a className="whatsapp-button" href={`/landings/${campaign.slug}`}>VOLVER A LA LANDING</a>
   </section></div></main>;
 }

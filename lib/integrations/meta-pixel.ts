@@ -63,6 +63,23 @@ export function trackMetaEventWhenReady(event: MetaEvent, campaign: string, para
   return () => { if (timer) window.clearTimeout(timer); };
 }
 
+export function trackJoinGroupWithTimeout(campaign: string, registrationId: string, maxWaitMs = 1_200): Promise<boolean> {
+  const scope = `${campaign}:${registrationId}`;
+  if (hasTrackedMetaEvent("JoinGroup", scope, "persistent")) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    let timer: number | undefined;
+    const attempt = () => {
+      // Meta bloqueado no puede impedir la apertura: el timeout siempre resuelve.
+      if (trackMetaEvent("JoinGroup", scope, { content_name: campaign, whatsappRedirectReached: true }, "persistent") || hasTrackedMetaEvent("JoinGroup", scope, "persistent")) { if (timer) window.clearTimeout(timer); resolve(true); return; }
+      const remaining = maxWaitMs - (Date.now() - startedAt);
+      if (remaining <= 0) { resolve(false); return; }
+      timer = window.setTimeout(attempt, Math.min(100, remaining));
+    };
+    attempt();
+  });
+}
+
 export function getMetaPixelBootstrap(pixelId: string) {
   return `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${pixelId}');`;
 }

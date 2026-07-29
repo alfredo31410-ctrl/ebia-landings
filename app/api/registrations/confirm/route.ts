@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCampaign, getEventStatus } from "@/lib/landings";
-import { createRegistrationToken, REGISTRATION_COOKIE, REGISTRATION_NONCE_COOKIE, sanitizeAttribution, verifyRegistrationNonce } from "@/lib/registration";
+import { createRegistrationToken, getRegistrationNonceStatus, REGISTRATION_COOKIE, REGISTRATION_NONCE_COOKIE, sanitizeAttribution, verifyRegistrationNonce } from "@/lib/registration";
 
 const MAX_BODY_BYTES = 16_384;
 
@@ -23,8 +23,9 @@ export async function POST(request: Request) {
     const body = JSON.parse(rawBody) as { landingSlug?: string; nonce?: string; attribution?: Record<string, unknown> };
     const campaign = body.landingSlug === "ia-desde-cero" ? getCampaign("ia-desde-cero") : null;
     const nonceCookie = request.headers.get("cookie")?.split(";").map((item) => item.trim()).find((item) => item.startsWith(`${REGISTRATION_NONCE_COOKIE}=`))?.slice(REGISTRATION_NONCE_COOKIE.length + 1);
+    const nonceStatus = getRegistrationNonceStatus(nonceCookie, "ia-desde-cero");
     const nonce = verifyRegistrationNonce(nonceCookie, "ia-desde-cero");
-    if (!campaign || !body.nonce || !nonce || body.nonce !== nonce.nonce || getEventStatus(campaign) !== "registration_open") return NextResponse.json({ ok: false }, { status: 400 });
+    if (!campaign || !body.nonce || !nonce || body.nonce !== nonce.nonce || getEventStatus(campaign) !== "registration_open") return NextResponse.json({ ok: false, code: nonceStatus === "expired" ? "nonce_expired" : "invalid_request" }, { status: 400 });
     const token = createRegistrationToken(campaign.slug, sanitizeAttribution(body.attribution || {}));
     const response = NextResponse.json({ ok: true, registrationId: token.data.registrationId });
     response.cookies.set(REGISTRATION_COOKIE, token.value, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: token.maxAge, path: "/" });

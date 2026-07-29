@@ -8,6 +8,7 @@ const NONCE_TTL_SECONDS = 60 * 5;
 
 export type RegistrationToken = { registrationId: string; landingSlug: string; createdAt: string; expiresAt: string; attribution: Record<string, string> };
 export type RegistrationNonce = { nonce: string; landingSlug: string; issuedAt: string; expiresAt: string };
+export type RegistrationNonceStatus = "valid" | "expired" | "wrong_landing" | "invalid";
 
 function sign(payload: string) {
   if (!hasSafeRegistrationSecret()) throw new Error("REGISTRATION_TOKEN_SECRET no está configurado de forma segura");
@@ -39,6 +40,13 @@ export function createRegistrationNonce(landingSlug: string) {
 export function verifyRegistrationNonce(value: string | null | undefined, landingSlug: string) {
   const data = decode<RegistrationNonce>(value);
   return data && data.landingSlug === landingSlug && new Date(data.expiresAt).getTime() > Date.now() ? data : null;
+}
+
+export function getRegistrationNonceStatus(value: string | null | undefined, landingSlug: string): RegistrationNonceStatus {
+  const data = decode<RegistrationNonce>(value);
+  if (!data) return "invalid";
+  if (data.landingSlug !== landingSlug) return "wrong_landing";
+  return new Date(data.expiresAt).getTime() > Date.now() ? "valid" : "expired";
 }
 
 export function createRegistrationToken(landingSlug: string, attribution: Record<string, string>) {
