@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect } from "react";
-import type { LandingCampaign } from "@/lib/landings";
+import type { EventStatus, LandingCampaign } from "@/lib/landings";
 import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
 import { Brand } from "./Brand";
 import { ActiveCampaignForm } from "./forms/ActiveCampaignForm";
@@ -19,7 +19,7 @@ const icons = {
 
 function Icon({ name }: { name: keyof typeof icons }) { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icons[name]}</svg>; }
 
-export function LandingPage({ campaign }: { campaign: LandingCampaign }) {
+export function LandingPage({ campaign, status }: { campaign: LandingCampaign; status: EventStatus }) {
   useEffect(() => trackMetaEventWhenReady("ViewContent", campaign.slug, { content_name: campaign.integrations.metaContentName, content_category: "Landing" }), [campaign.integrations.metaContentName, campaign.slug]);
   const goToForm = useCallback(() => { trackMetaEventWhenReady("RegistrationStart", campaign.slug, { content_name: campaign.integrations.metaContentName, content_category: "Formulario ActiveCampaign" }, "session"); document.querySelector("#registro")?.scrollIntoView({ behavior: "smooth" }); }, [campaign.integrations.metaContentName, campaign.slug]);
 

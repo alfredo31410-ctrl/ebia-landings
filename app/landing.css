@@ -86,6 +86,11 @@
 .form-card { min-height:430px; border-radius:16px; background:#fff; padding:25px; color:#161b43; box-shadow:0 24px 65px rgba(11,5,59,.3); }
 .active-campaign-form { min-height:360px; }
 .form-placeholder { display:grid; min-height:380px; place-items:center; align-content:center; border:2px dashed #d6d9ea; border-radius:12px; background:#fafbff; color:#6b7185; text-align:center; }
+.form-step { margin:0 0 8px; color:#5630e7; font-size:12px; font-weight:900; letter-spacing:.14em; }
+.form-instruction { margin:0 0 18px; color:#656c80; font-size:14px; line-height:1.5; }
+.form-error { border:1px solid #f3a0a7; border-radius:10px; background:#fff1f2; padding:11px 13px; color:#a51d2d; font-size:13px; line-height:1.45; }
+.form-status { border-radius:10px; background:#f1ebff; padding:11px 13px; color:#5630e7; font-size:13px; }
+.active-campaign-form button,.active-campaign-form input[type="submit"] { min-height:44px; }
 .form-placeholder strong { color:#2c3061; font-size:20px; }
 .form-placeholder code { color:#5733d5; }
 .landing-footer { background:#fff; padding:32px 0; }

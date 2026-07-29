@@ -1,5 +1,5 @@
 export type MetaStandardEvent = "ViewContent" | "CompleteRegistration";
-export type MetaCustomEvent = "RegistrationStart" | "WhatsAppGroupClick";
+export type MetaCustomEvent = "RegistrationStart" | "WhatsAppGroupClick" | "JoinGroup";
 export type MetaEvent = MetaStandardEvent | MetaCustomEvent;
 export type MetaEventParams = Record<string, string | number | boolean | undefined>;
 export type DedupeScope = "persistent" | "session" | "none";
