@@ -22,6 +22,9 @@ export type LandingCampaign = {
   integrations: { activeCampaignFormId: string; metaContentName: string };
   event: {
     startsAt: string;
+    displayDate: string;
+    displayTime: string;
+    displayTimeZone: string;
     /** TODO: definir antes de producción; no se asume una duración. */
     endsAt: string | null;
     registrationClosesAt: string | null;
@@ -40,10 +43,10 @@ export const campaigns = {
     headline: "Aprende Inteligencia Artificial", highlightedHeadline: "sin ser experto",
     intro: "Descubre cómo ordenar tus ideas, crear mejores instrucciones y utilizar la IA en tareas reales de trabajo, estudio o negocio, aunque estés comenzando desde cero.",
     primaryCta: "RESERVAR MI LUGAR GRATIS", secondaryCta: "Explorar el contenido",
-    microcopy: "Registro gratuito · Cupo sujeto a disponibilidad",
+    microcopy: "Registro gratuito · Clase en línea para principiantes",
     facts: [
       { label: "Fecha", value: "12 DE AGOSTO DE 2026" }, { label: "Hora", value: "11:00 A. M." },
-      { label: "Zona", value: "HORA DE CDMX" }, { label: "Modalidad", value: "EN LÍNEA" },
+      { label: "Zona", value: "hora de Ciudad de México" }, { label: "Modalidad", value: "EN LÍNEA" },
     ],
     image: { src: "/landings/ia-desde-cero/instructora.png", alt: "Instructora de EBIA en la clase de Inteligencia Artificial", width: 1067, height: 600 },
     visualNotes: ["Nivel inicial", "Ejercicios prácticos"],
@@ -52,8 +55,8 @@ export const campaigns = {
       { title: "Crea mejores prompts", description: "Aprende un método sencillo para obtener respuestas más relevantes." },
       { title: "Aplica desde el día uno", description: "Lleva lo aprendido a actividades concretas de trabajo, estudio o negocio." },
     ] },
-    integrations: { activeCampaignFormId: "273", metaContentName: "IA desde cero" },
-    event: { startsAt: "2026-08-12T11:00:00-06:00", endsAt: null, registrationClosesAt: null, timeZone: "America/Mexico_City", whatsappInviteUrlEnv: "NEXT_PUBLIC_WHATSAPP_GROUP_URL" },
+    integrations: { activeCampaignFormId: "297", metaContentName: "IA desde cero" },
+    event: { startsAt: "2026-08-12T11:00:00-06:00", displayDate: "12 de agosto de 2026", displayTime: "11:00 a. m.", displayTimeZone: "hora de Ciudad de México", endsAt: null, registrationClosesAt: null, timeZone: "America/Mexico_City", whatsappInviteUrlEnv: "WHATSAPP_GROUP_URL" },
     thanks: { title: "Solo falta entrar al grupo oficial de WhatsApp", message: "Tus datos fueron guardados correctamente.", actionLabel: "COMPLETAR MI ACCESO EN WHATSAPP" },
   },
 } satisfies Record<string, LandingCampaign>;

@@ -1,46 +1,59 @@
 # Embudo IA desde cero
 
-## Diagnóstico
+## Arquitectura y limitaciones
 
-El repositorio usa Next.js App Router. La landing es `app/landings/ia-desde-cero`, el formulario es un embed de ActiveCampaign y el Pixel se inicializa una sola vez en `app/layout.tsx` mediante `MetaPixel`. Antes de estos cambios, gracias confirmaba cualquier visita y el CTA saltaba directamente al enlace de WhatsApp; no existía persistencia ni ruta API.
+El proyecto usa Next.js App Router. La landing está en `app/landings/ia-desde-cero`; el formulario oficial es el embed de ActiveCampaign 297 (`cefincapacitacion.activehosted.com/f/embed.php?id=297`). El Pixel se inicializa una sola vez en `app/layout.tsx` mediante `next/script` y `MetaPixel`. No hay base de datos, Redis, Vercel KV, sistema de logs persistente, rate limiting distribuido ni CAPI.
 
-## Configuración requerida
+El embed procesa el registro en el navegador. La aparición de su mensaje de éxito es una señal visual útil para la experiencia, pero no certifica server-side que ActiveCampaign haya guardado el contacto. El flujo actual es, por tanto: confirmación basada en señal del cliente del embed + nonce/cookie firmados. La verificación fuerte futura requiere API, webhook o consulta server-side de ActiveCampaign.
 
-| Variable | Finalidad | Ejemplo sin secreto | Ubicación |
-| --- | --- | --- | --- |
-| `NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT` | Cuenta pública para el embed | `cefincapacitacion` | `.env.local` y hosting |
-| `NEXT_PUBLIC_META_PIXEL_ID` | ID público del Pixel | `123456789012345` | `.env.local` y hosting |
-| `NEXT_PUBLIC_WHATSAPP_GROUP_URL` | Destino fijo permitido | `https://chat.whatsapp.com/codigo` | `.env.local` y hosting |
-| `REGISTRATION_TOKEN_SECRET` | Firma de cookie httpOnly | valor aleatorio largo | solo servidor y hosting |
+## Flujo
 
-No se incluyeron credenciales de ActiveCampaign, etiquetas, automatizaciones ni una invitación privada. El formulario conserva el embed y su `formId` existente (`273`); la etiqueta/lista/automatización deben verificarse en la cuenta antes de producción.
-
-## Flujo y tracking
-
-1. `MetaPixel` inicializa `fbq` una sola vez en el layout y envía `PageView` una vez por pathname.
-2. ActiveCampaign muestra el estado real de éxito; solo entonces el cliente llama `/api/registrations/confirm`.
-3. El endpoint genera un identificador, fecha, expiración, landing y UTMs sanitizados en una cookie firmada `httpOnly`.
-4. Gracias verifica esa cookie en servidor. Sin ella muestra recuperación y no envía `CompleteRegistration`.
-5. `CompleteRegistration` usa `fbq("track", ...)` y una clave persistente por `registrationId`, evitando recargas, Strict Mode y pestañas duplicadas.
-6. El CTA entra a `/unirse-whatsapp`. La ruta valida cookie, campaña y URL de configuración; espera 1.5 segundos y envía `fbq("trackCustom", "JoinGroup", ...)`. Este evento solo significa que se alcanzó la redirección, no que el usuario se unió realmente.
-
-Para probar Pixel: usar Meta Pixel Helper, revisar `PageView`, `CompleteRegistration` y `JoinGroup` en Administrador de eventos, comprobar la consola y filtrar las solicitudes a `facebook.com/tr` en Network. No se agregó CAPI porque no existe arquitectura ni credencial disponible.
+1. La landing solicita `/api/registrations/nonce`; el servidor emite un nonce HMAC de cinco minutos en cookie `httpOnly`, asociado a `ia-desde-cero`.
+2. El embed 297 muestra sus propios campos, validaciones y estados. El código observa únicamente su contenedor, deshabilita controles durante el envío y tiene timeout de 15 segundos.
+3. Solo ante un selector visible de éxito del embed se llama `POST /api/registrations/confirm` con nonce y atribución.
+4. El endpoint exige `POST`, `application/json`, mismo origen, cuerpo máximo de 16 KB, nonce vigente en cookie y body, campaña válida y estado `registration_open`. Sin persistencia no puede garantizar consumo atómico entre dispositivos; elimina la cookie para evitar replay normal en el mismo navegador.
+5. Gracias verifica una cookie HMAC `httpOnly` de 24 horas. Sin ella no muestra confirmación ni dispara `CompleteRegistration`.
+6. El evento `CompleteRegistration` usa `fbq("track", ...)` y un `eventID` derivado del identificador del registro. `localStorage` es una defensa adicional, no una garantía entre dispositivos.
+7. El CTA entra a `/landings/ia-desde-cero/unirse-whatsapp`. Se valida cookie y configuración, se intenta `JoinGroup` con `fbq("trackCustom", ...)`, se espera aproximadamente 1.5 segundos y se navega a `/api/whatsapp/redirect`, que resuelve el destino únicamente en servidor.
 
 ## ActiveCampaign
 
-Se usa `https://<cuenta>.activehosted.com/f/embed.php?id=273`. El criterio de éxito es la aparición visible de uno de los selectores de éxito del embed, no un HTTP 200. ActiveCampaign conserva su propio manejo de contactos preexistentes; la asociación a la etiqueta/lista/automatización de esta clase debe confirmarse en la cuenta. Si el embed no muestra éxito, no hay redirección ni evento de conversión.
+Embed: `https://cefincapacitacion.activehosted.com/f/embed.php?id=297`. Los selectores de éxito conservados son `._form-thank-you`, `._form_success`, `._form-success` y `[data-form-success]`; los selectores de error son `[role=alert]`, `._form_error` y `._form-error`. Deben contrastarse con el HTML real del formulario 297 tras cualquier cambio de ActiveCampaign. Un error visible o timeout restaura controles y no redirige.
 
-## Pruebas ejecutadas
+No se afirma nada sobre listas, etiquetas, automatizaciones, campos personalizados o contactos preexistentes sin evidencia de la cuenta. Un contacto existente será exitoso solo si el propio formulario 297 muestra su estado de aceptación.
 
-- `npm.cmd run typecheck`: correcto.
-- `npm.cmd run build`: correcto; se generaron landing, gracias, ruta interna y API.
+## Variables de entorno
 
-No hay framework de pruebas instalado. Pendientes manuales: formulario válido/inválido, doble clic, error y timeout del embed, contacto existente, acceso directo y recarga de gracias, una sola conversión, URL faltante o inválida, UTMs, y responsive en 360/375/390/412/430 px, tablet y desktop.
+| Variable | Tipo | Finalidad | Si falta |
+| --- | --- | --- | --- |
+| `REGISTRATION_TOKEN_SECRET` | server-side | HMAC de nonce y cookie; mínimo 32 caracteres | confirmación bloqueada |
+| `WHATSAPP_GROUP_URL` | server-side | destino fijo del grupo | WhatsApp bloqueado |
+| `NEXT_PUBLIC_META_PIXEL_ID` | pública | ID público existente del Pixel | se conserva el fallback existente |
+| `NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT` | pública | cuenta usada por el embed | se conserva la cuenta existente |
 
-## Pendientes y riesgos
+El enlace de WhatsApp no se acepta por query string ni se expone como `NEXT_PUBLIC_`. Se valida `https`, host exacto `chat.whatsapp.com`, path no vacío y ausencia de query/hash. No contiene valores privados en el repositorio.
 
-- Configurar `REGISTRATION_TOKEN_SECRET` y `NEXT_PUBLIC_WHATSAPP_GROUP_URL` en cada entorno; sin ellos el flujo se detiene de forma segura.
-- Confirmar en ActiveCampaign la etiqueta, lista, automatización, actualización de contactos existentes y persistencia de teléfono/UTMs.
-- `endsAt` y `registrationClosesAt` quedan explícitamente en `null`: no se inventó duración ni cierre. Definirlos antes de producción.
-- La protección del cliente evita doble clic, pero la cookie firmada es la barrera server-side para gracias. La deduplicación de Pixel es local al navegador; si se requiere deduplicación entre dispositivos deberá añadirse almacenamiento interno/CAPI.
-- La ruta `/unirse-whatsapp` no confirma membresía real; la comparación con miembros reales debe hacerse operativamente.
+## UTMs
+
+Se capturan `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `campaign_id`, `adset_id`, `ad_id`, `placement`, `fbclid`, `landing_slug`, `event_id` y timestamp. Cada valor se limita a 200 caracteres y se conserva únicamente dentro del token temporal firmado. No existe mapeo real a campos de ActiveCampaign ni persistencia analítica: captura temporal `COMPLETADO`; persistencia analítica `PENDIENTE DE IMPLEMENTACIÓN`.
+
+## Estados del evento
+
+`startsAt`, `registrationClosesAt`, `endsAt` y `timeZone` viven en `lib/landings.ts`. `registrationClosesAt` y `endsAt` están en `null` con TODO: no se inventó cierre ni duración. El servidor rechaza registros si el estado deja de ser `registration_open`; definir esos valores antes de producción para completar el cierre automático.
+
+## Tracking y pruebas
+
+`PageView` se envía una vez por pathname desde `MetaPixel`; no hay Google Tag Manager ni segunda inicialización detectada. `CompleteRegistration` solo se intenta en gracias válida. `JoinGroup` solo indica llegada a la redirección, no membresía real.
+
+Pruebas automatizadas: `npm test` cubre estado del evento, firma manipulada, nonce/landing, sanitización y host de WhatsApp. Pruebas de embed, contactos existentes, Meta bloqueado y responsive requieren navegador y cuenta real.
+
+Prueba adversarial del endpoint sin nonce/origen válido: debe responder `403` o `400`; una llamada directa nunca emite cookie de registro. Esto reduce abuso, pero no verifica por sí mismo ActiveCampaign.
+
+## Pendientes y camino de validación fuerte
+
+- `PENDIENTE DE VERIFICACIÓN`: confirmar HTML real, éxito/error y comportamiento de contacto preexistente del formulario 297.
+- `BLOQUEADO`: deduplicación server-side completa y registro interno atómico, porque no existe almacenamiento persistente.
+- `BLOQUEADO`: WhatsApp hasta configurar `WHATSAPP_GROUP_URL` en local, preview y producción.
+- `PENDIENTE DE VERIFICACIÓN`: pruebas manuales en 360, 375, 390, 412, 430, 768 y 1440 px.
+
+La evolución recomendada es: formulario/API propia hacia ActiveCampaign con credenciales, webhook correlacionado o consulta server-side que confirme contacto y asociación. Para ello harán falta credenciales API, lista, etiqueta, automatización, campos personalizados y una clave de correlación.

@@ -21,11 +21,11 @@ export function ThankYouPage({ campaign, registration }: { campaign: LandingCamp
       <p className="thanks-progress">PASO 2 DE 2 · ÚLTIMO PASO <span /></p>
       <div className="thanks-check" aria-hidden="true"><CheckIcon /></div>
       <h1>{campaign.thanks.title}</h1>
-      <p className="thanks-lead"><strong>{campaign.thanks.message}</strong><br />Entra ahora al grupo oficial para recibir el enlace de acceso, los recordatorios y los avisos importantes de la clase del 12 de agosto.</p>
+      <p className="thanks-lead"><strong>{campaign.thanks.message}</strong><br />Entra ahora al grupo oficial para recibir el enlace de acceso, los recordatorios y los avisos importantes de la clase del {event.displayDate}.</p>
       <a className="whatsapp-button" href={`/landings/${campaign.slug}/unirse-whatsapp`}><WhatsAppIcon />{campaign.thanks.actionLabel}</a>
       <p className="thanks-button-note">Cuando se abra WhatsApp, toca “Unirme al grupo” para terminar.</p>
       <div className="thanks-alert"><strong>Tu proceso todavía no está completo.</strong> WhatsApp será el canal oficial de comunicación para esta clase.</div>
-      <div className="thanks-steps"><article className="is-current"><small>Fecha</small><p>12 de agosto de 2026</p></article><article><small>Hora</small><p>11:00 a. m. · {event.timeZone}</p></article><article><small>Modalidad</small><p>En línea · registro gratuito</p></article></div>
+      <div className="thanks-steps"><article className="is-current"><small>Fecha</small><p>{event.displayDate}</p></article><article><small>Hora</small><p>{event.displayTime} · {event.displayTimeZone}</p></article><article><small>Modalidad</small><p>En línea · registro gratuito</p></article></div>
     </section></div>
   </main>;
 }
