@@ -1,56 +1,65 @@
 export type DirectSalesContent = {
-  product: string;
-  category: string;
+  product: { name: string; shortName: string; level: string; format: string; dates: string };
+  price: { amount: number; currency: "MXN"; formatted: string; paymentLabel: string };
   eyebrow: string;
-  headline: string;
-  accentHeadline: string;
-  subheadline: string;
-  audience: string;
-  problem: string;
-  mechanism: string;
-  instructor: string;
-  instructorRole: string;
-  price: { amount: number; currency: "MXN"; paymentLabel: string };
-  level: string;
-  access?: string;
-  guarantee?: string;
-  support?: string;
-  benefits: { title: string; text: string; outcome: string }[];
-  modules: { number: string; title: string; result: string; topics: string[] }[];
-  bonuses: { title: string; text: string; use: string }[];
+  promise: string;
+  audience: string[];
+  outcomes: { title: string; text: string }[];
+  howItWorks: string[];
+  includes: string[];
+  afterPurchase: string[];
   faqs: { question: string; answer: string }[];
+  seller: string;
+  checkoutName: string;
 };
 
 export const directSalesPage: DirectSalesContent = {
-  product: "Ecosistema IA desde cero",
-  category: "Programa práctico",
-  eyebrow: "Aprendizaje aplicado",
-  headline: "Convierte la inteligencia artificial en una forma más clara de trabajar",
-  accentHeadline: "desde tu primer proyecto",
-  subheadline: "Un recorrido guiado para entender qué herramientas usar, cómo pedir mejores resultados y cómo llevar la IA a tareas reales sin perderte entre tutoriales.",
-  audience: "Personas que quieren empezar a usar IA con criterio, aunque todavía no tengan experiencia técnica.",
-  problem: "Guardar herramientas y ver tutoriales sueltos no crea un sistema de trabajo. Sin una ruta, es fácil saltar entre novedades sin saber qué aplicar ni cómo evaluar el resultado.",
-  mechanism: "Aprendes con una secuencia simple: entender el problema, elegir la herramienta, dar contexto, revisar la salida y convertirla en un proceso repetible.",
-  instructor: "Equipo EBIA",
-  instructorRole: "Formación digital práctica",
-  price: { amount: 1490, currency: "MXN", paymentLabel: "Pago único" },
-  level: "Inicial",
-  benefits: [
-    { title: "De la curiosidad a una tarea concreta", text: "Deja de probar herramientas al azar y parte de lo que necesitas resolver.", outcome: "Un punto de partida claro para cada uso." },
-    { title: "Prompts que puedes revisar", text: "Aprende a dar contexto, pedir un formato y mejorar una respuesta paso a paso.", outcome: "Instrucciones más consistentes y útiles." },
-    { title: "Un sistema que se puede repetir", text: "Organiza tus aprendizajes para volver a usarlos en contenidos, investigación y operación.", outcome: "Menos fricción en tareas frecuentes." },
+  product: {
+    name: "Inteligencia Artificial: Reto Práctico de 3 Días",
+    shortName: "Reto Práctico de IA",
+    level: "Desde cero",
+    format: "3 días en vivo",
+    dates: "17 al 19 de agosto",
+  },
+  price: { amount: 197, currency: "MXN", formatted: "$197 MXN", paymentLabel: "Pago único" },
+  eyebrow: "Reto práctico en vivo · Nivel inicial",
+  promise: "Aprende a usar la IA desde cero para ahorrar tiempo, crear contenido y mejorar tu productividad.",
+  audience: [
+    "Personas que quieren empezar a usar inteligencia artificial desde cero.",
+    "Personas que buscan ahorrar tiempo en tareas cotidianas.",
+    "Personas que quieren crear contenido con más estructura.",
+    "Personas que quieren mejorar su productividad mediante herramientas de IA.",
   ],
-  modules: [
-    { number: "01", title: "El mapa de la IA útil", result: "Distingue qué problemas sí conviene resolver con IA.", topics: ["Casos de uso", "Límites y revisión", "Criterios para elegir"] },
-    { number: "02", title: "La instrucción que da dirección", result: "Construye prompts con contexto, objetivo y formato.", topics: ["Estructura base", "Ejemplos", "Iteración"] },
-    { number: "03", title: "Del resultado al proceso", result: "Convierte una respuesta aislada en un flujo de trabajo.", topics: ["Plantillas", "Control de calidad", "Documentación"] },
-    { number: "04", title: "Tu primer sistema aplicado", result: "Diseña una aplicación concreta para tu contexto.", topics: ["Definición del problema", "Implementación", "Siguiente mejora"] },
+  outcomes: [
+    { title: "Entender por dónde empezar", text: "Identifica cómo comenzar a usar herramientas de IA con una guía práctica y clara." },
+    { title: "Ahorrar tiempo en tareas concretas", text: "Aplica IA como apoyo para resolver actividades cotidianas con más orden." },
+    { title: "Crear contenido con estructura", text: "Utiliza la IA como apoyo para organizar ideas y avanzar en tu productividad." },
   ],
-  bonuses: [
-    { title: "Biblioteca de plantillas", text: "Prompts base para empezar a practicar con estructura.", use: "Acelera tus primeros ejercicios." },
-    { title: "Checklist de revisión", text: "Una guía corta para evaluar respuestas antes de usarlas.", use: "Reduce errores por copiar y pegar sin revisar." },
+  howItWorks: [
+    "Se realiza durante tres días.",
+    "Las sesiones son en vivo.",
+    "Está pensado para personas que empiezan desde cero.",
+    "El enfoque es introductorio y práctico.",
+  ],
+  includes: [
+    "Participación en el Reto Práctico de 3 Días.",
+    "Tres días en vivo.",
+    "Formación introductoria y práctica.",
+    "Proceso de compra seguro mediante Hotmart.",
+  ],
+  afterPurchase: [
+    "Completa el pago en Hotmart.",
+    "Recibe la confirmación de compra en tu correo.",
+    "Consulta las instrucciones de acceso enviadas para participar en el reto.",
   ],
   faqs: [
-    { question: "¿Necesito experiencia previa?", answer: "No. El recorrido está planteado para comenzar desde lo esencial y avanzar con ejemplos prácticos." },
+    { question: "¿Necesito experiencia previa?", answer: "No. El reto está planteado para personas que quieren comenzar a utilizar inteligencia artificial desde cero." },
+    { question: "¿Cuándo se realiza?", answer: "Del 17 al 19 de agosto." },
+    { question: "¿Cuál es la modalidad?", answer: "El reto se realiza en vivo durante tres días." },
+    { question: "¿Cuánto cuesta?", answer: "El acceso tiene un precio de $197 MXN." },
+    { question: "¿Cómo se procesa el pago?", answer: "El pago se procesa de forma segura mediante Hotmart para CEFIN - Contabilidad e Impuestos." },
+    { question: "¿Cuándo recibiré las instrucciones?", answer: "Después de completar la compra, recibirás por correo la confirmación y las indicaciones disponibles para acceder al reto." },
   ],
+  seller: "CEFIN - Contabilidad e Impuestos",
+  checkoutName: "Inteligencia Artificial: Reto Práctico de 3 Días",
 };

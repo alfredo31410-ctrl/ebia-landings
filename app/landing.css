@@ -220,6 +220,26 @@
 @media (max-width:620px){.ecosystem-shell { width:min(100% - 28px,1160px); }.ecosystem-topline { min-height:31px; padding:0 10px; font-size:10px; text-align:center; }.ecosystem-header .ecosystem-shell { min-height:66px; }.ecosystem-brand { font-size:25px; }.mini-cta { min-height:39px; padding:0 12px; font-size:11px; }.ecosystem-hero h1 { font-size:clamp(42px,12.5vw,58px); }.ecosystem-lead { font-size:16px; }.ecosystem-actions { display:grid; }.ecosystem-primary { width:100%; }.ecosystem-visual { min-height:405px; border-radius:30% 70% 32% 48%; }.visual-card--main { right:5%; bottom:18%; width:84%; padding:19px; }.visual-card--main strong { font-size:22px; }.visual-card--float { top:13%; left:5%; }.ecosystem-trust { transform:none; margin:25px 0 0; }.trust-grid { grid-template-columns:1fr 1fr; gap:18px 0; padding:18px; }.trust-grid div { padding:0 13px; border-right:1px solid var(--eco-line); }.trust-grid div:nth-child(2) { border-right:0; }.trust-grid div:nth-child(-n+2) { padding-bottom:15px; border-bottom:1px solid var(--eco-line); }.trust-grid div:nth-child(3),.trust-grid div:nth-child(4) { padding-top:15px; }.ecosystem-section { padding:75px 0; }.ecosystem-section h2,.ecosystem-final h2 { font-size:36px; }.new-benefit-grid { margin-top:30px; }.new-benefit-grid article { min-height:0; }.method-flow { margin-top:30px; }.include-grid .ecosystem-primary { width:auto; }.instructor-card { grid-template-columns:1fr; padding:28px; text-align:center; }.instructor-mark { margin:auto; }.credential-stack { grid-column:auto; grid-row:auto; }.price-card { padding:24px 19px; }.price { font-size:47px; }.after-grid { grid-template-columns:1fr; margin-top:30px; }.faq-grid { gap:30px; }.ecosystem-final { padding:75px 0; }.ecosystem-final .ecosystem-primary { width:auto; }.ecosystem-footer { padding:28px 0; }}
 @media (prefers-reduced-motion:reduce){.ecosystem-page * { scroll-behavior:auto!important; transition:none!important; animation:none!important; }}
 
+/* Ajustes de oferta: Reto Práctico de IA de 3 Días */
+.challenge-page .ecosystem-hero h1 { max-width:700px; }
+.seller-note { max-width:540px; margin:12px 0 0; color:#777e92; font-size:12px; line-height:1.5; }
+.audience-list { display:grid; gap:16px; margin:0; padding:0; list-style:none; color:var(--eco-muted); line-height:1.55; }
+.audience-list li { display:flex; gap:13px; align-items:flex-start; }
+.audience-list li::before { content:"✓"; display:grid; width:23px; height:23px; flex:0 0 auto; place-items:center; border-radius:50%; background:#eee8ff; color:var(--eco-purple); font-weight:900; }
+.method-flow--short { grid-template-columns:repeat(4,1fr); align-items:stretch; }
+.method-flow--short article { min-height:145px; border-color:var(--eco-line); background:#fff; }
+.method-flow--short article p { margin:18px 0 0; font-size:14px; }
+.method-flow--short small { color:var(--eco-purple); font-size:11px; font-weight:900; letter-spacing:.14em; }
+.include-list--clean { display:grid; gap:0; margin:0; padding:0; list-style:none; border-top:1px solid rgba(255,255,255,.24); }
+.include-list--clean li { display:flex; gap:15px; align-items:flex-start; border-bottom:1px solid rgba(255,255,255,.24); padding:19px 0; color:#e3defc; line-height:1.55; }
+.include-list--clean li span { color:#b7ffdc; font-weight:900; }
+.include-list--clean li p { margin:0; font-size:14px; }
+.offer-description { max-width:470px; margin-top:22px; color:var(--eco-muted); line-height:1.65; }
+.after-grid--three { grid-template-columns:repeat(3,1fr); }
+.after-grid--three>div p { margin-top:21px; color:var(--eco-muted); line-height:1.6; }
+@media (max-width:900px){.method-flow--short { grid-template-columns:repeat(2,1fr); }.after-grid--three { grid-template-columns:1fr; }}
+@media (max-width:620px){.method-flow--short { grid-template-columns:1fr; }.challenge-page .ecosystem-hero h1 { font-size:clamp(39px,11.5vw,54px); }.seller-note { margin-inline:auto; }}
+
 @media (max-width:620px){
   .thanks-header { min-height:66px; }
   .thanks-background { inset:97px 0 0; }
