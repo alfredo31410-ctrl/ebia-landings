@@ -8,7 +8,10 @@ import { buildCheckoutUrl, formatPrice, getCheckoutBaseUrl } from "@/lib/checkou
 function Arrow() { return <span aria-hidden="true">↗</span>; }
 
 export default function Page() {
-  const [checkout, setCheckout] = useState<string | null>(null);
+  const [checkout, setCheckout] = useState<string | null>(() => {
+    const base = getCheckoutBaseUrl();
+    return base ? buildCheckoutUrl(base.toString()) : null;
+  });
   const viewed = useRef(false);
   useEffect(() => {
     document.title = "Reto Práctico de Inteligencia Artificial de 3 Días | EBIA";
