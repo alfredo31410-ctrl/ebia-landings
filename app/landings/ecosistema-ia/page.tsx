@@ -10,7 +10,6 @@ function Arrow() { return <span aria-hidden="true">↗</span>; }
 export default function Page() {
   const [checkout, setCheckout] = useState<string | null>(null);
   const viewed = useRef(false);
-
   useEffect(() => {
     document.title = "Reto Práctico de Inteligencia Artificial de 3 Días | EBIA";
     const stored = window.sessionStorage.getItem("ebia-attribution") || "";
@@ -27,20 +26,16 @@ export default function Page() {
     trackView();
     return () => { if (timer) window.clearTimeout(timer); };
   }, []);
-
   const buy = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (!checkout) { event.preventDefault(); document.getElementById("checkout-status")?.focus(); return; }
     if (typeof window.fbq === "function") window.fbq("trackCustom", "CheckoutButtonClick", { content_name: content.product.name, value: content.price.amount, currency: content.price.currency });
   };
   const href = checkout ?? "#checkout-status";
   const cta = "Quiero entrar al reto de IA";
-
   return <main className="ecosystem-page challenge-page">
     <div className="ecosystem-topline"><span className="status-dot" /> {content.eyebrow}</div>
     <header className="ecosystem-header"><div className="ecosystem-shell"><a className="ecosystem-brand" href="#inicio" aria-label="EBIA, inicio">EBIA<span>.</span></a><a className="mini-cta" href={href} onClick={buy}>{cta} <Arrow /></a></div></header>
-
-    <section className="ecosystem-hero sales-hero" id="inicio"><div className="ecosystem-shell ecosystem-hero-grid"><div className="ecosystem-hero-copy sales-hero__content"><p className="ecosystem-eyebrow">{content.eyebrow}</p><h1>{content.product.name}</h1><p className="ecosystem-lead">{content.promise}</p><div className="ecosystem-actions"><a className="ecosystem-primary" href={href} onClick={buy}>{cta} <Arrow /></a><a className="ecosystem-text-link" href="#incluye">Ver qué incluye <span>↓</span></a></div><p className="ecosystem-microcopy">{content.price.paymentLabel} · {content.price.formatted} · Pago seguro procesado por Hotmart.</p><p className="seller-note">La compra es procesada para {content.seller}.</p></div><div className="ecosystem-visual sales-hero__visual" aria-label="Fotografía de la instructora del reto práctico de inteligencia artificial" role="img"><div className="visual-glow" /><div className="visual-grid" /><Image className="hero-instructor" src="/images/landings/reto-ia/instructora-hero.png" alt="Instructora del reto práctico de inteligencia artificial" width={1067} height={1600} priority sizes="(max-width: 620px) 92vw, (max-width: 1024px) 48vw, 470px" /></div></div></section>
-
+    <section className="ecosystem-hero sales-hero" id="inicio"><div className="ecosystem-shell ecosystem-hero-grid"><div className="ecosystem-hero-copy sales-hero__content"><p className="ecosystem-eyebrow">{content.eyebrow}</p><h1>{content.product.name}</h1><p className="ecosystem-lead">{content.promise}</p><div className="ecosystem-actions"><a className="ecosystem-primary" href={href} onClick={buy}>{cta} <Arrow /></a><a className="ecosystem-text-link" href="#incluye">Ver qué incluye <span>↓</span></a></div><p className="ecosystem-microcopy">{content.price.paymentLabel} · {content.price.formatted} · Pago seguro procesado por Hotmart.</p><p className="seller-note">La compra es procesada para {content.seller}.</p></div><div className="ecosystem-visual sales-hero__visual" aria-label="Fotografía de la instructora del reto práctico de inteligencia artificial" role="img"><div className="visual-glow" /><div className="visual-grid" /><Image className="hero-instructor" src="/landings/media/images/landings/reto-ia/instructora-hero.png" alt="Instructora del reto práctico de inteligencia artificial" width={1067} height={1600} priority sizes="(max-width: 620px) 92vw, (max-width: 1024px) 48vw, 470px" /></div></div></section>
     <section className="ecosystem-trust"><div className="ecosystem-shell trust-grid"><div><small>FECHAS</small><strong>{content.product.dates}</strong></div><div><small>MODALIDAD</small><strong>{content.product.format}</strong></div><div><small>NIVEL</small><strong>{content.product.level}</strong></div><div><small>PROCESO</small><strong>Pago con Hotmart</strong></div></div></section>
     <section className="ecosystem-section problem-section"><div className="ecosystem-shell split-section"><div><p className="ecosystem-kicker">Para quién es</p><h2>Una primera experiencia práctica con inteligencia artificial.</h2></div><ul className="audience-list">{content.audience.map((item) => <li key={item}>{item}</li>)}</ul></div></section>
     <section className="ecosystem-section benefits-section-new"><div className="ecosystem-shell"><div className="section-intro"><p className="ecosystem-kicker">Qué podrás comenzar a hacer</p><h2>Aprende lo esencial para pasar a la práctica.</h2></div><div className="new-benefit-grid">{content.outcomes.map((item, index) => <article key={item.title}><span className="benefit-number">0{index + 1}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></div></section>
