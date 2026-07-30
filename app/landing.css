@@ -238,6 +238,7 @@
 .after-grid--three { grid-template-columns:repeat(3,1fr); }
 .after-grid--three>div p { margin-top:21px; color:var(--eco-muted); line-height:1.6; }
 .hero-instructor { position:absolute; z-index:3; right:4%; bottom:-5%; width:min(72%,470px); height:600px; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 22px 25px rgba(26,28,83,.24)); mask-image:linear-gradient(to bottom,black 0%,black 75%,transparent 100%); -webkit-mask-image:linear-gradient(to bottom,black 0%,black 75%,transparent 100%); animation:instructor-rise .8s ease-out both; }
+.sales-hero__visual { align-self:stretch; }
 @keyframes instructor-rise { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 @media (max-width:900px){.method-flow--short { grid-template-columns:repeat(2,1fr); }.after-grid--three { grid-template-columns:1fr; }}
 @media (max-width:620px){.method-flow--short { grid-template-columns:1fr; }.challenge-page .ecosystem-hero h1 { font-size:clamp(39px,11.5vw,54px); }.seller-note { margin-inline:auto; }.hero-instructor { right:-5%; bottom:-3%; width:95%; height:430px; object-position:center bottom; }}
