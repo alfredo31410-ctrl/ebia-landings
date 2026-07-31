@@ -85,11 +85,29 @@ test("registro-confirmado recupera nonce ausente, expirado, manipulado o de otra
 test("la ruta prefijada de nonce conserva la validación y crea cookie segura", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");
-  const response = await POST(new Request("https://example.test/landings/ia-desde-cero/api/registrations/nonce", { method: "POST", headers: { origin: "https://example.test", "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-desde-cero" }) }));
+  const response = await POST(new Request("https://ebiacapacitacion.com/landings/ia-desde-cero/api/registrations/nonce", { method: "POST", headers: { origin: "https://ebiacapacitacion.com", "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-desde-cero" }) }));
   assert.equal(response.status, 200);
   assert.equal((await response.json()).ok, true);
   assert.match(response.headers.get("set-cookie") || "", /ebia_registration_nonce=/);
   assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(response.headers.get("access-control-allow-origin"), "https://ebiacapacitacion.com");
+  assert.doesNotMatch(response.headers.get("access-control-allow-origin") || "", /,/);
+  assert.equal(response.headers.get("vary"), "Origin");
+});
+
+test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");
+  for (const origin of ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"]) {
+    const response = await POST(new Request(`${origin}/landings/ia-desde-cero/api/registrations/nonce`, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-desde-cero" }) }));
+    assert.equal(response.status, 200, origin);
+    assert.equal(response.headers.get("access-control-allow-origin"), origin);
+    assert.doesNotMatch(response.headers.get("access-control-allow-origin") || "", /,/);
+  }
+  const rejected = await POST(new Request("https://ebiacapacitacion.com/landings/ia-desde-cero/api/registrations/nonce", { method: "POST", headers: { origin: "https://evil.example", "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-desde-cero" }) }));
+  assert.equal(rejected.status, 403);
+  assert.equal(rejected.headers.get("access-control-allow-origin"), null);
+  assert.equal(rejected.headers.get("vary"), "Origin");
 });
 
 test("la ruta prefijada de WhatsApp solo redirige con token válido y destino server-side", async () => {
