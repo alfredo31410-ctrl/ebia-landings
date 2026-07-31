@@ -1,4 +1,13 @@
 {
   "redirects": [{ "source": "/landings", "destination": "/landings/ia-desde-cero", "permanent": false }],
-  "headers": [{ "source": "/landings/(.*)\\.(png|webp)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }]
+  "headers": [
+    {
+      "source": "/landings/ia-desde-cero/api/registrations/nonce",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://ebiacapacitacion.com" },
+        { "key": "Vary", "value": "Origin" }
+      ]
+    },
+    { "source": "/landings/(.*)\\.(png|webp)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  ]
 }
