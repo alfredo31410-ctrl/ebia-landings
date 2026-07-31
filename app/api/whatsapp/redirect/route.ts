@@ -7,7 +7,7 @@ import { getWhatsAppGroupUrl } from "@/lib/whatsapp";
 export async function GET(request: Request) {
   const campaign = getCampaign("ia-desde-cero");
   const token = verifyRegistrationToken((await cookies()).get(REGISTRATION_COOKIE)?.value);
-  const target = getWhatsAppGroupUrl();
+  const target = getWhatsAppGroupUrl(campaign.slug);
   if (!token || token.landingSlug !== campaign.slug || !target) return NextResponse.json({ ok: false }, { status: 403 });
   // El destino se obtiene solo del servidor y nunca de query params, evitando
   // que esta ruta se convierta en un open redirect.

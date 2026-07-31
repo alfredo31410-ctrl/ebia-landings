@@ -11,6 +11,8 @@ export type RegistrationNonce = { nonce: string; landingSlug: string; issuedAt: 
 export type RegistrationNonceStatus = "valid" | "expired" | "wrong_landing" | "invalid";
 
 function sign(payload: string) {
+  // El token se firma en servidor para impedir que el navegador
+  // pueda fabricar por sí solo un acceso válido a la página de gracias.
   if (!hasSafeRegistrationSecret()) throw new Error("REGISTRATION_TOKEN_SECRET no está configurado de forma segura");
   return createHmac("sha256", getRegistrationSecret()).update(payload).digest("base64url");
 }

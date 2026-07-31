@@ -1,4 +1,4 @@
-export const ACTIVE_CAMPAIGN_ACCOUNT = process.env.NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT || "cefincapacitacion";
+export const ACTIVE_CAMPAIGN_ACCOUNT = process.env.NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT || "";
 export const getActiveCampaignClassName = (formId: string) => `_form_${formId}`;
 export const getActiveCampaignEmbedUrl = (formId: string) => `https://${ACTIVE_CAMPAIGN_ACCOUNT}.activehosted.com/f/embed.php?id=${encodeURIComponent(formId)}`;
 // Estos selectores son los estados que ya contemplaba la integración del embed.

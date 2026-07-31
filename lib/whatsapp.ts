@@ -1,5 +1,8 @@
-export function getWhatsAppGroupUrl() {
-  const value = process.env.WHATSAPP_GROUP_URL;
+import { getCampaign, type CampaignSlug } from "./landings.ts";
+
+export function getWhatsAppGroupUrl(slug: CampaignSlug) {
+  const campaign = getCampaign(slug);
+  const value = process.env[campaign.event.whatsappEnvKey];
   if (!value) return null;
   try {
     const url = new URL(value);

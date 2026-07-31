@@ -30,15 +30,15 @@ test("firma, expiración y sanitización de nonce/token", async () => {
 });
 
 test("el host de WhatsApp debe ser HTTPS y oficial", async () => {
-  process.env.WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/invite-code";
+  process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code";
   const { getWhatsAppGroupUrl } = await import("./whatsapp.ts");
-  assert.equal(getWhatsAppGroupUrl(), "https://chat.whatsapp.com/invite-code");
-  process.env.WHATSAPP_GROUP_URL = "https://example.com/open-redirect";
-  assert.equal(getWhatsAppGroupUrl(), null);
-  process.env.WHATSAPP_GROUP_URL = "http://chat.whatsapp.com/invite-code";
-  assert.equal(getWhatsAppGroupUrl(), null);
-  process.env.WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/invite-code?x=1";
-  assert.equal(getWhatsAppGroupUrl(), null);
-  process.env.WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/invite-code#fragment";
-  assert.equal(getWhatsAppGroupUrl(), null);
+  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), "https://chat.whatsapp.com/invite-code");
+  process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://example.com/open-redirect";
+  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "http://chat.whatsapp.com/invite-code";
+  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code?x=1";
+  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code#fragment";
+  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
 });

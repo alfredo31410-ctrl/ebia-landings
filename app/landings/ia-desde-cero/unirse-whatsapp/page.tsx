@@ -11,5 +11,5 @@ export default async function Page() {
   const campaign = getCampaign("ia-desde-cero");
   const token = verifyRegistrationToken((await cookies()).get(REGISTRATION_COOKIE)?.value);
   const registration = token?.landingSlug === campaign.slug ? token : null;
-  return <WhatsAppRedirectPage campaign={campaign} registration={registration} whatsappConfigured={Boolean(getWhatsAppGroupUrl())} />;
+  return <WhatsAppRedirectPage campaign={campaign} registration={registration} whatsappConfigured={Boolean(getWhatsAppGroupUrl(campaign.slug))} />;
 }

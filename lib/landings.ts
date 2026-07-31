@@ -29,7 +29,7 @@ export type LandingCampaign = {
     endsAt: string | null;
     registrationClosesAt: string | null;
     timeZone: string;
-    whatsappInviteUrlEnv: string;
+    whatsappEnvKey: string;
   };
   thanks: { title: string; message: string; actionLabel: string };
 };
@@ -56,7 +56,7 @@ export const campaigns = {
       { title: "Aplica desde el día uno", description: "Lleva lo aprendido a actividades concretas de trabajo, estudio o negocio." },
     ] },
     integrations: { activeCampaignFormId: "297", metaContentName: "IA desde cero" },
-    event: { startsAt: "2026-08-12T11:00:00-06:00", displayDate: "12 de agosto de 2026", displayTime: "11:00 a. m.", displayTimeZone: "hora de Ciudad de México", endsAt: null, registrationClosesAt: null, timeZone: "America/Mexico_City", whatsappInviteUrlEnv: "WHATSAPP_GROUP_URL" },
+    event: { startsAt: "2026-08-12T11:00:00-06:00", displayDate: "12 de agosto de 2026", displayTime: "11:00 a. m.", displayTimeZone: "hora de Ciudad de México", endsAt: null, registrationClosesAt: null, timeZone: "America/Mexico_City", whatsappEnvKey: "WHATSAPP_GROUP_URL_IA_DESDE_CERO" },
     thanks: { title: "Solo falta entrar al grupo oficial de WhatsApp", message: "Tus datos fueron guardados correctamente.", actionLabel: "COMPLETAR MI ACCESO EN WHATSAPP" },
   },
 } satisfies Record<string, LandingCampaign>;

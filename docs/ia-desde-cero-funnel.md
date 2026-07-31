@@ -2,7 +2,7 @@
 
 ## Arquitectura y limitaciones
 
-El proyecto usa Next.js App Router. La landing está en `app/landings/ia-desde-cero`; el formulario oficial es el embed de ActiveCampaign 297 (`cefincapacitacion.activehosted.com/f/embed.php?id=297`). El Pixel se inicializa una sola vez en `app/layout.tsx` mediante `next/script` y `MetaPixel`. No hay base de datos, Redis, Vercel KV, sistema de logs persistente, rate limiting distribuido ni CAPI.
+El proyecto usa Next.js App Router. La landing está en `app/landings/ia-desde-cero`; el formulario oficial es el embed de ActiveCampaign 297, cuya cuenta se toma de `NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT`. El Pixel se inicializa una sola vez en `app/layout.tsx` mediante `next/script` y `MetaPixel`. No hay base de datos, Redis, Vercel KV, sistema de logs persistente, rate limiting distribuido ni CAPI.
 
 El embed procesa el registro en el navegador. La aparición de su mensaje de éxito es una señal visual útil para la experiencia, pero no certifica server-side que ActiveCampaign haya guardado el contacto. El flujo actual es, por tanto: confirmación basada en señal del cliente del embed + nonce/cookie firmados. La verificación fuerte futura requiere API, webhook o consulta server-side de ActiveCampaign.
 
@@ -20,7 +20,7 @@ El nonce se renueva 45 segundos antes de expirar, al recuperar un error y, una s
 
 ## ActiveCampaign
 
-Embed: `https://cefincapacitacion.activehosted.com/f/embed.php?id=297`. Los selectores de éxito conservados son `._form-thank-you`, `._form_success`, `._form-success` y `[data-form-success]`; los selectores de error son `[role=alert]`, `._form_error` y `._form-error`. Deben contrastarse con el HTML real del formulario 297 tras cualquier cambio de ActiveCampaign. Un error visible o timeout restaura controles y no redirige.
+Embed: `https://{NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT}.activehosted.com/f/embed.php?id=297`. La landing IA desde cero conserva `activeCampaignFormId: "297"`. Los selectores de éxito conservados son `._form-thank-you`, `._form_success`, `._form-success` y `[data-form-success]`; los selectores de error son `[role=alert]`, `._form_error` y `._form-error`. Deben contrastarse con el HTML real del formulario 297 tras cualquier cambio de ActiveCampaign. Un error visible o timeout restaura controles y no redirige.
 
 No se afirma nada sobre listas, etiquetas, automatizaciones, campos personalizados o contactos preexistentes sin evidencia de la cuenta. Un contacto existente será exitoso solo si el propio formulario 297 muestra su estado de aceptación.
 
@@ -28,12 +28,14 @@ No se afirma nada sobre listas, etiquetas, automatizaciones, campos personalizad
 
 | Variable | Tipo | Finalidad | Si falta |
 | --- | --- | --- | --- |
+| `NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT` | pública | subdominio global usado por los embeds | embed no disponible |
+| `NEXT_PUBLIC_META_PIXEL_ID` | pública | Pixel global de la operación | tracking desactivado |
 | `REGISTRATION_TOKEN_SECRET` | server-side | HMAC de nonce y cookie; mínimo 32 caracteres | confirmación bloqueada |
-| `WHATSAPP_GROUP_URL` | server-side | destino fijo del grupo | WhatsApp bloqueado |
-| `NEXT_PUBLIC_META_PIXEL_ID` | pública | ID público existente del Pixel | se conserva el fallback existente |
-| `NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT` | pública | cuenta usada por el embed | se conserva la cuenta existente |
+| `WHATSAPP_GROUP_URL_IA_DESDE_CERO` | server-side | grupo específico de IA desde cero | WhatsApp bloqueado |
 
-El enlace de WhatsApp no se acepta por query string ni se expone como `NEXT_PUBLIC_`. Se valida `https`, host exacto `chat.whatsapp.com`, path no vacío y ausencia de query/hash. No contiene valores privados en el repositorio.
+El enlace de WhatsApp se resuelve mediante el `slug` y `whatsappEnvKey` declarados en `lib/landings.ts`. No se acepta por query string ni se expone como `NEXT_PUBLIC_`. Se valida `https`, host exacto `chat.whatsapp.com`, path no vacío y ausencia de query/hash. No contiene valores privados en el repositorio.
+
+Las variables globales son `NEXT_PUBLIC_ACTIVE_CAMPAIGN_ACCOUNT`, `NEXT_PUBLIC_META_PIXEL_ID` y `REGISTRATION_TOKEN_SECRET`. Cada landing declara además su `slug`, `activeCampaignFormId`, `whatsappEnvKey` y datos de evento. Para agregar una futura landing se incorpora una entrada equivalente en `lib/landings.ts`, por ejemplo `activeCampaignFormId: "301"` y `whatsappEnvKey: "WHATSAPP_GROUP_URL_AUXILIAR_CONTABLE"`, sin agregarla ahora ni inventar URLs reales.
 
 ## UTMs
 
@@ -56,7 +58,7 @@ Prueba adversarial completa: `POST /api/registrations/nonce` con origen y cuerpo
 - `PENDIENTE DE VERIFICACIÓN`: confirmar HTML real, éxito/error y comportamiento de contacto preexistente del formulario 297.
 - `PENDIENTE DE VERIFICACIÓN`: ejecutar manualmente el caso de una persona que tarda más de cinco minutos; el nonce se renueva automáticamente y también existe un reintento único tras éxito visual.
 - `BLOQUEADO`: deduplicación server-side completa y registro interno atómico, porque no existe almacenamiento persistente.
-- `BLOQUEADO`: WhatsApp hasta configurar `WHATSAPP_GROUP_URL` en local, preview y producción.
+- `BLOQUEADO`: WhatsApp hasta configurar `WHATSAPP_GROUP_URL_IA_DESDE_CERO` en local, preview y producción.
 - `PENDIENTE DE VERIFICACIÓN`: pruebas manuales en 360, 375, 390, 412, 430, 768 y 1440 px.
 - `PENDIENTE DE VERIFICACIÓN`: Pixel tardío/bloqueado; la navegación no espera indefinidamente y continúa tras 1.5 segundos.
 
