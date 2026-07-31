@@ -21,7 +21,7 @@ export function WhatsAppRedirectPage({ campaign, registration, whatsappConfigure
   const navigateOnce = () => {
     if (navigationStartedRef.current) return;
     navigationStartedRef.current = true;
-    window.location.assign("/api/whatsapp/redirect");
+    window.location.assign("/landings/ia-desde-cero/api/whatsapp/redirect");
   };
   const redirectAutomatically = async () => {
     if (!registration || !whatsappConfigured) return;

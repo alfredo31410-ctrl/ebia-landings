@@ -81,3 +81,27 @@ test("registro-confirmado recupera nonce ausente, expirado, manipulado o de otra
   }
   Date.now = originalNow;
 });
+
+test("la ruta prefijada de nonce conserva la validación y crea cookie segura", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");
+  const response = await POST(new Request("https://example.test/landings/ia-desde-cero/api/registrations/nonce", { method: "POST", headers: { origin: "https://example.test", "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-desde-cero" }) }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).ok, true);
+  assert.match(response.headers.get("set-cookie") || "", /ebia_registration_nonce=/);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+});
+
+test("la ruta prefijada de WhatsApp solo redirige con token válido y destino server-side", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code";
+  const { createRegistrationToken } = await import("./registration.ts");
+  const { GET } = await import("../app/landings/ia-desde-cero/api/whatsapp/redirect/route.ts");
+  const invalid = await GET(new Request("https://example.test/landings/ia-desde-cero/api/whatsapp/redirect?url=https://example.com"));
+  assert.equal(invalid.status, 403);
+  const token = createRegistrationToken("ia-desde-cero", {});
+  const response = await GET(new Request("https://example.test/landings/ia-desde-cero/api/whatsapp/redirect?url=https://example.com", { headers: { cookie: `ebia_registration=${token.value}` } }));
+  assert.equal(response.status, 307);
+  assert.equal(response.headers.get("location"), "https://chat.whatsapp.com/invite-code");
+  assert.equal(response.headers.get("cache-control"), "no-store");
+});
