@@ -1,5 +1,5 @@
 export type MetaStandardEvent = "ViewContent" | "CompleteRegistration";
-export type MetaCustomEvent = "RegistrationStart" | "WhatsAppGroupClick";
+export type MetaCustomEvent = "RegistrationStart" | "WhatsAppGroupClick" | "JoinGroup";
 export type MetaEvent = MetaStandardEvent | MetaCustomEvent;
 export type MetaEventParams = Record<string, string | number | boolean | undefined>;
 export type DedupeScope = "persistent" | "session" | "none";
@@ -61,6 +61,23 @@ export function trackMetaEventWhenReady(event: MetaEvent, campaign: string, para
   };
   run();
   return () => { if (timer) window.clearTimeout(timer); };
+}
+
+export function trackJoinGroupWithTimeout(campaign: string, registrationId: string, maxWaitMs = 1_200): Promise<boolean> {
+  const scope = `${campaign}:${registrationId}`;
+  if (hasTrackedMetaEvent("JoinGroup", scope, "persistent")) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    let timer: number | undefined;
+    const attempt = () => {
+      // Meta bloqueado no puede impedir la apertura: el timeout siempre resuelve.
+      if (trackMetaEvent("JoinGroup", scope, { content_name: campaign, whatsappRedirectReached: true }, "persistent") || hasTrackedMetaEvent("JoinGroup", scope, "persistent")) { if (timer) window.clearTimeout(timer); resolve(true); return; }
+      const remaining = maxWaitMs - (Date.now() - startedAt);
+      if (remaining <= 0) { resolve(false); return; }
+      timer = window.setTimeout(attempt, Math.min(100, remaining));
+    };
+    attempt();
+  });
 }
 
 export function getMetaPixelBootstrap(pixelId: string) {
