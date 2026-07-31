@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getEventStatus, getCampaign } from "./landings.ts";
 
+const setNodeEnv = (value: string | undefined) => { (process.env as Record<string, string | undefined>).NODE_ENV = value; };
+
 test("el estado del evento permanece abierto antes de la clase", () => {
   const campaign = getCampaign("ia-desde-cero");
   assert.equal(getEventStatus(campaign, new Date("2026-08-01T10:00:00-06:00")), "registration_open");
@@ -43,22 +45,40 @@ test("el host de WhatsApp debe ser HTTPS y oficial", async () => {
   assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
 });
 
+test("el origen público no depende de request.url en producción", async () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
+  const { getPublicOrigin } = await import("./public-origin.ts");
+  assert.equal(getPublicOrigin(new Request("https://ebia-landings.vercel.app/internal")), "https://ebiacapacitacion.com");
+  setNodeEnv("development");
+  assert.equal(getPublicOrigin(new Request("http://localhost:3000/internal", { headers: { host: "localhost:3000", "x-forwarded-proto": "http" } })), "http://localhost:3000");
+  assert.throws(() => getPublicOrigin(new Request("https://evil.example/internal", { headers: { host: "evil.example", "x-forwarded-proto": "https" } })), /public_origin_unavailable/);
+  setNodeEnv(originalNodeEnv);
+});
+
 test("registro-confirmado crea cookie y redirige a gracias con nonce valido", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
   const { createRegistrationNonce } = await import("./registration.ts");
   const { GET } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
   const nonce = createRegistrationNonce("ia-desde-cero");
   const response = await GET(new Request("https://example.test/landings/ia-desde-cero/registro-confirmado?utm_source=test", { headers: { cookie: `ebia_registration_nonce=${nonce.value}` } }));
   assert.equal(response.status, 303);
-  assert.equal(new URL(response.headers.get("location") || "").pathname, "/landings/ia-desde-cero/gracias");
+  assert.equal(response.headers.get("location"), "https://ebiacapacitacion.com/landings/ia-desde-cero/gracias");
   assert.equal(response.headers.get("X-Robots-Tag"), "noindex, nofollow");
   assert.match(response.headers.get("set-cookie") || "", /ebia_registration=/);
   assert.match(response.headers.get("set-cookie") || "", /Max-Age=86400/);
+  assert.match(response.headers.get("set-cookie") || "", /ebia_registration_nonce=/);
+  assert.match(response.headers.get("set-cookie") || "", /Max-Age=0/);
   assert.doesNotMatch(response.text ? await response.text() : "", /CompleteRegistration/);
+  setNodeEnv(originalNodeEnv);
 });
 
 test("registro-confirmado recupera nonce ausente, expirado, manipulado o de otra landing", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
   const { createRegistrationNonce } = await import("./registration.ts");
   const { GET } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
   const valid = createRegistrationNonce("ia-desde-cero");
@@ -76,10 +96,11 @@ test("registro-confirmado recupera nonce ausente, expirado, manipulado o de otra
     const cookie = value ? { headers: { cookie: `ebia_registration_nonce=${value}` } } : undefined;
     const response = await GET(new Request("https://example.test/landings/ia-desde-cero/registro-confirmado", cookie));
     assert.equal(response.status, 303);
-    assert.equal(new URL(response.headers.get("location") || "").search, "?registro=confirmacion_invalida");
+    assert.equal(response.headers.get("location"), "https://ebiacapacitacion.com/landings/ia-desde-cero?registro=confirmacion_invalida");
     assert.doesNotMatch(response.headers.get("set-cookie") || "", /ebia_registration=/);
   }
   Date.now = originalNow;
+  setNodeEnv(originalNodeEnv);
 });
 
 test("los endpoints del navegador conservan el mismo origen visible", async () => {
