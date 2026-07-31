@@ -19,11 +19,12 @@ const icons = {
 
 function Icon({ name }: { name: keyof typeof icons }) { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icons[name]}</svg>; }
 
-export function LandingPage({ campaign }: { campaign: LandingCampaign }) {
+export function LandingPage({ campaign, registrationError = false }: { campaign: LandingCampaign; registrationError?: boolean }) {
   useEffect(() => trackMetaEventWhenReady("ViewContent", campaign.slug, { content_name: campaign.integrations.metaContentName, content_category: "Landing" }), [campaign.integrations.metaContentName, campaign.slug]);
   const goToForm = useCallback(() => { trackMetaEventWhenReady("RegistrationStart", campaign.slug, { content_name: campaign.integrations.metaContentName, content_category: "Formulario ActiveCampaign" }, "session"); document.querySelector("#registro")?.scrollIntoView({ behavior: "smooth" }); }, [campaign.integrations.metaContentName, campaign.slug]);
 
   return <main className="campaign">
+    {registrationError && <p className="form-error" role="alert">No pudimos completar el último paso del registro. Vuelve a intentarlo.</p>}
     <div className="live-bar"><span />Clase en vivo para principiantes</div>
     <header className="landing-header shell"><Brand /><button className="header-cta" type="button" onClick={goToForm}>Reservar acceso</button></header>
 
