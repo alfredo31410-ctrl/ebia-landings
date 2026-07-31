@@ -82,6 +82,30 @@ test("registro-confirmado recupera nonce ausente, expirado, manipulado o de otra
   Date.now = originalNow;
 });
 
+test("los endpoints del navegador conservan el mismo origen visible", async () => {
+  const originalWindow = globalThis.window;
+  Object.defineProperty(globalThis, "window", { configurable: true, value: { location: { origin: "https://ebiacapacitacion.com" } } });
+  const { getSameOriginUrl, IA_NONCE_PATH, IA_WHATSAPP_REDIRECT_PATH } = await import("./same-origin-url.ts");
+  assert.equal(getSameOriginUrl(IA_NONCE_PATH), "https://ebiacapacitacion.com/landings/ia-desde-cero/api/registrations/nonce");
+  assert.equal(getSameOriginUrl(IA_WHATSAPP_REDIRECT_PATH), "https://ebiacapacitacion.com/landings/ia-desde-cero/api/whatsapp/redirect");
+  assert.throws(() => getSameOriginUrl("https://ebia-landings.vercel.app/landings/ia-desde-cero/api/registrations/nonce"), /cross_origin_endpoint/);
+  assert.doesNotMatch(getSameOriginUrl(IA_NONCE_PATH), /ebia-landings\.vercel\.app|baseURI|VERCEL_URL/);
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async (input, init) => {
+      assert.equal(input, "https://ebiacapacitacion.com/landings/ia-desde-cero/api/registrations/nonce");
+      assert.equal(init?.credentials, "same-origin");
+      return new Response(JSON.stringify({ ok: true, nonce: "test-nonce", expiresAt: "2026-08-01T00:00:00.000Z" }), { status: 200, headers: { "content-type": "application/json" } });
+    };
+    const { requestRegistrationNonce } = await import("./registration-client.ts");
+    await requestRegistrationNonce("ia-desde-cero");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  if (originalWindow === undefined) delete (globalThis as { window?: unknown }).window;
+  else Object.defineProperty(globalThis, "window", { configurable: true, value: originalWindow });
+});
+
 test("la ruta prefijada de nonce conserva la validación y crea cookie segura", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { LandingCampaign } from "@/lib/landings";
 import type { RegistrationToken } from "@/lib/registration";
 import { trackJoinGroupWithTimeout } from "@/lib/integrations/meta-pixel";
+import { getSameOriginUrl, IA_WHATSAPP_REDIRECT_PATH } from "@/lib/same-origin-url";
 
 export function WhatsAppRedirectPage({ campaign, registration, whatsappConfigured }: { campaign: LandingCampaign; registration: RegistrationToken | null; whatsappConfigured: boolean }) {
   const [seconds, setSeconds] = useState(2);
@@ -21,7 +22,7 @@ export function WhatsAppRedirectPage({ campaign, registration, whatsappConfigure
   const navigateOnce = () => {
     if (navigationStartedRef.current) return;
     navigationStartedRef.current = true;
-    window.location.assign("/landings/ia-desde-cero/api/whatsapp/redirect");
+    window.location.assign(getSameOriginUrl(IA_WHATSAPP_REDIRECT_PATH));
   };
   const redirectAutomatically = async () => {
     if (!registration || !whatsappConfigured) return;
