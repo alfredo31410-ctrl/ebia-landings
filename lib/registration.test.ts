@@ -42,3 +42,42 @@ test("el host de WhatsApp debe ser HTTPS y oficial", async () => {
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code#fragment";
   assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
 });
+
+test("registro-confirmado crea cookie y redirige a gracias con nonce valido", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const { createRegistrationNonce } = await import("./registration.ts");
+  const { GET } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
+  const nonce = createRegistrationNonce("ia-desde-cero");
+  const response = await GET(new Request("https://example.test/landings/ia-desde-cero/registro-confirmado?utm_source=test", { headers: { cookie: `ebia_registration_nonce=${nonce.value}` } }));
+  assert.equal(response.status, 303);
+  assert.equal(new URL(response.headers.get("location") || "").pathname, "/landings/ia-desde-cero/gracias");
+  assert.equal(response.headers.get("X-Robots-Tag"), "noindex, nofollow");
+  assert.match(response.headers.get("set-cookie") || "", /ebia_registration=/);
+  assert.match(response.headers.get("set-cookie") || "", /Max-Age=86400/);
+  assert.doesNotMatch(response.text ? await response.text() : "", /CompleteRegistration/);
+});
+
+test("registro-confirmado recupera nonce ausente, expirado, manipulado o de otra landing", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const { createRegistrationNonce } = await import("./registration.ts");
+  const { GET } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
+  const valid = createRegistrationNonce("ia-desde-cero");
+  const otherLanding = createRegistrationNonce("otra-landing");
+  const originalNow = Date.now;
+  const expired = createRegistrationNonce("ia-desde-cero");
+  Date.now = () => originalNow() + 6 * 60 * 1000;
+  const cases = [
+    undefined,
+    `${valid.value}x`,
+    otherLanding.value,
+    expired.value,
+  ];
+  for (const value of cases) {
+    const cookie = value ? { headers: { cookie: `ebia_registration_nonce=${value}` } } : undefined;
+    const response = await GET(new Request("https://example.test/landings/ia-desde-cero/registro-confirmado", cookie));
+    assert.equal(response.status, 303);
+    assert.equal(new URL(response.headers.get("location") || "").search, "?registro=confirmacion_invalida");
+    assert.doesNotMatch(response.headers.get("set-cookie") || "", /ebia_registration=/);
+  }
+  Date.now = originalNow;
+});
