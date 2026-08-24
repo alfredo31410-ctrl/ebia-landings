@@ -61,9 +61,12 @@ test("registro-confirmado crea cookie y redirige a gracias con nonce valido", as
   const originalNodeEnv = process.env.NODE_ENV;
   setNodeEnv("production");
   const { createRegistrationNonce } = await import("./registration.ts");
-  const { GET } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
+  const { handleConfirmedRegistration } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
   const nonce = createRegistrationNonce("ia-desde-cero");
-  const response = await GET(new Request("https://example.test/landings/ia-desde-cero/registro-confirmado?utm_source=test", { headers: { cookie: `ebia_registration_nonce=${nonce.value}` } }));
+  const response = await handleConfirmedRegistration(
+    new Request("https://example.test/landings/ia-desde-cero/registro-confirmado?utm_source=test", { headers: { cookie: `ebia_registration_nonce=${nonce.value}` } }),
+    new Date("2026-08-01T10:00:00-06:00"),
+  );
   assert.equal(response.status, 303);
   assert.equal(response.headers.get("location"), "https://ebiacapacitacion.com/landings/ia-desde-cero/gracias");
   assert.equal(response.headers.get("X-Robots-Tag"), "noindex, nofollow");
@@ -138,6 +141,30 @@ test("la ruta prefijada de nonce conserva la validación y crea cookie segura", 
   assert.equal(response.headers.get("access-control-allow-origin"), "https://ebiacapacitacion.com");
   assert.doesNotMatch(response.headers.get("access-control-allow-origin") || "", /,/);
   assert.equal(response.headers.get("vary"), "Origin");
+});
+
+test("IA para Maestros prepara nonce y confirma el regreso del formulario 327", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
+  const { POST } = await import("../app/landings/ia-maestros/api/registrations/nonce/route.ts");
+  const nonceResponse = await POST(new Request("https://ebiacapacitacion.com/landings/ia-maestros/api/registrations/nonce", { method: "POST", headers: { origin: "https://ebiacapacitacion.com", "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-maestros" }) }));
+  assert.equal(nonceResponse.status, 200);
+  const setCookie = nonceResponse.headers.get("set-cookie") || "";
+  const nonceValue = setCookie.match(/ebia_registration_nonce=([^;]+)/)?.[1];
+  assert.ok(nonceValue);
+
+  const { handleTeacherConfirmedRegistration } = await import("../app/landings/ia-maestros/registro-confirmado/route.ts");
+  const attribution = encodeURIComponent(JSON.stringify({ utm_source: "meta", utm_campaign: "docentes" }));
+  const response = await handleTeacherConfirmedRegistration(
+    new Request("https://example.test/landings/ia-maestros/registro-confirmado", { headers: { cookie: `ebia_registration_nonce=${nonceValue}; ebia_attribution_ia_maestros=${attribution}` } }),
+    new Date("2026-08-24T10:00:00-06:00"),
+  );
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get("location"), "https://ebiacapacitacion.com/landings/ia-maestros/gracias");
+  assert.match(response.headers.get("set-cookie") || "", /ebia_registration=/);
+  assert.match(response.headers.get("set-cookie") || "", /ebia_attribution_ia_maestros=/);
+  setNodeEnv(originalNodeEnv);
 });
 
 test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {

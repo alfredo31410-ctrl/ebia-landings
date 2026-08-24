@@ -15,12 +15,20 @@ function invalidRedirect(request: Request) {
   return response;
 }
 
-export async function GET(request: Request) {
+export async function handleConfirmedRegistration(
+  request: Request,
+  now = new Date(),
+) {
   const nonceCookie = cookieValue(request, REGISTRATION_NONCE_COOKIE);
   const status = getRegistrationNonceStatus(nonceCookie, campaign.slug);
   const nonce = verifyRegistrationNonce(nonceCookie, campaign.slug);
 
-  if (!nonce || status !== "valid" || getEventStatus(campaign) !== "registration_open") return invalidRedirect(request);
+  if (
+    !nonce ||
+    status !== "valid" ||
+    getEventStatus(campaign, now) !== "registration_open"
+  )
+    return invalidRedirect(request);
 
   // ActiveCampaign ya confirmó el registro; aquí solo convertimos el nonce
   // firmado en la cookie temporal que habilita la página de gracias.
@@ -31,4 +39,8 @@ export async function GET(request: Request) {
   response.cookies.set(REGISTRATION_COOKIE, token.value, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: token.maxAge, path: "/" });
   response.cookies.set(REGISTRATION_NONCE_COOKIE, "", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 0, path: "/" });
   return response;
+}
+
+export function GET(request: Request) {
+  return handleConfirmedRegistration(request);
 }

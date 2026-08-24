@@ -9,7 +9,7 @@ export type EventStatus =
   | "ended";
 
 export type LandingCampaign = {
-  slug: "ia-desde-cero";
+  slug: "ia-desde-cero" | "ia-maestros";
   variant: CampaignVariant;
   seo: { title: string; description: string };
   topbar: string;
@@ -23,8 +23,15 @@ export type LandingCampaign = {
   facts: CampaignFact[];
   image: { src: string; alt: string; width: number; height: number };
   visualNotes: [string, string];
-  section: { eyebrow: string; title: string; outcomes: CampaignOutcome[] };
-  integrations: { activeCampaignFormId: string; metaContentName: string };
+  section: {
+    eyebrow: string;
+    title: string;
+    outcomes: CampaignOutcome[];
+  };
+  integrations: {
+    activeCampaignFormId: string;
+    metaContentName: string;
+  };
   event: {
     startsAt: string;
     displayDate: string;
@@ -37,6 +44,12 @@ export type LandingCampaign = {
     whatsappEnvKey: string;
   };
   thanks: { title: string; message: string; actionLabel: string };
+  instructor?: {
+    /** Completar cuando EBIA confirme la información pública de la instructora. */
+    name: string | null;
+    role: string | null;
+    bio: string | null;
+  };
 };
 
 export const campaigns = {
@@ -67,7 +80,7 @@ export const campaigns = {
       src: "/landings/ia-desde-cero/instructora.png",
       alt: "Instructora de EBIA en la clase de Inteligencia Artificial",
       width: 1067,
-      height: 600,
+      height: 1600,
     },
     visualNotes: ["Nivel inicial", "Ejercicios prácticos"],
     section: {
@@ -109,6 +122,83 @@ export const campaigns = {
       title: "Solo falta entrar al grupo oficial de WhatsApp",
       message: "Tus datos fueron guardados correctamente.",
       actionLabel: "COMPLETAR MI ACCESO EN WHATSAPP",
+    },
+  },
+  "ia-maestros": {
+    slug: "ia-maestros",
+    variant: "class",
+    seo: {
+      title: "IA para Maestros · Clase gratuita",
+      description:
+        "Aprende a utilizar Inteligencia Artificial en tu trabajo docente, desde cero y con ejemplos prácticos.",
+    },
+    topbar: "Clase gratuita en línea para docentes",
+    eyebrow: "CLASE GRATUITA EN LÍNEA PARA DOCENTES",
+    headline: "La IA no tiene que dar la clase por ti.",
+    highlightedHeadline: "Puede ayudarte a empezar.",
+    intro:
+      "Aprende a utilizar Inteligencia Artificial en tu trabajo docente, desde cero y paso a paso, con ejemplos prácticos para tu día a día como maestro.",
+    primaryCta: "RESERVAR MI LUGAR GRATIS",
+    secondaryCta: "Ver qué aprenderás",
+    microcopy:
+      "Paso 1 de 2 · Después de registrarte entrarás al grupo oficial de WhatsApp para recibir tu acceso.",
+    facts: [
+      { label: "Fecha", value: "2 de septiembre" },
+      { label: "Hora", value: "6:00 PM" },
+      { label: "Zona", value: "Hora CDMX" },
+      { label: "Modalidad", value: "En línea · Clase gratuita" },
+    ],
+    image: {
+      src: "/landings/media/ia-desde-cero/Foto2.png",
+      alt: "Instructora de EBIA que impartirá la clase de IA para maestros",
+      width: 1067,
+      height: 1600,
+    },
+    visualNotes: ["Sin experiencia previa", "Aplicado a la enseñanza"],
+    section: {
+      eyebrow: "Qué aprenderás",
+      title: "Una forma simple de empezar a usar IA como maestro",
+      outcomes: [
+        {
+          title: "Ideas para actividades",
+          description:
+            "Aprende a pedir propuestas que puedas adaptar a tu grupo y a tus objetivos.",
+        },
+        {
+          title: "Explicaciones más claras",
+          description:
+            "Utiliza la IA como apoyo para explorar otras maneras de presentar un tema.",
+        },
+        {
+          title: "Preguntas para repasar",
+          description:
+            "Genera puntos de partida para reforzar lo visto en clase sin perder tu criterio.",
+        },
+      ],
+    },
+    integrations: {
+      activeCampaignFormId: "327",
+      metaContentName: "IA para Maestros",
+    },
+    event: {
+      startsAt: "2026-09-02T18:00:00-06:00",
+      displayDate: "2 de septiembre de 2026",
+      displayTime: "6:00 p. m.",
+      displayTimeZone: "hora CDMX",
+      endsAt: null,
+      registrationClosesAt: null,
+      timeZone: "America/Mexico_City",
+      whatsappEnvKey: "WHATSAPP_GROUP_URL_IA_MAESTROS",
+    },
+    thanks: {
+      title: "Solo falta entrar al grupo oficial de WhatsApp",
+      message: "Tus datos ya fueron guardados correctamente.",
+      actionLabel: "ENTRAR AL GRUPO DE WHATSAPP",
+    },
+    instructor: {
+      name: null,
+      role: null,
+      bio: null,
     },
   },
 } satisfies Record<string, LandingCampaign>;

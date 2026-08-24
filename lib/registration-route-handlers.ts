@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server.js";
 import { hasSafeRegistrationSecret } from "./env.ts";
-import { getCampaign } from "./landings.ts";
+import { getCampaign, type CampaignSlug } from "./landings.ts";
 import {
   createRegistrationNonce,
   REGISTRATION_COOKIE,
   REGISTRATION_NONCE_COOKIE,
   verifyRegistrationToken,
+  WHATSAPP_ACCESS_COOKIE,
 } from "./registration.ts";
 import { getWhatsAppGroupUrl } from "./whatsapp.ts";
 
@@ -60,7 +61,10 @@ export async function handleRegistrationNonce(request: Request) {
         origin,
       );
     const body = JSON.parse(rawBody) as { landing?: string };
-    if (body.landing !== "ia-desde-cero")
+    if (
+      body.landing !== "ia-desde-cero" &&
+      body.landing !== "ia-maestros"
+    )
       return NextResponse.json({ ok: false }, { status: 400 });
     const nonce = createRegistrationNonce(body.landing);
     const response = NextResponse.json({
@@ -93,14 +97,36 @@ const getCookie = (request: Request, name: string) =>
 
 /** Redirige al destino configurado en servidor; nunca acepta un destino por query string. */
 export async function handleWhatsAppRedirect(request: Request) {
-  const campaign = getCampaign("ia-desde-cero");
+  return handleCampaignWhatsAppRedirect(
+    request,
+    "ia-desde-cero",
+    REGISTRATION_COOKIE,
+  );
+}
+
+export async function handleCampaignWhatsAppRedirect(
+  request: Request,
+  slug: CampaignSlug,
+  cookieName = WHATSAPP_ACCESS_COOKIE,
+) {
+  const campaign = getCampaign(slug);
   const token = verifyRegistrationToken(
-    getCookie(request, REGISTRATION_COOKIE),
+    getCookie(request, cookieName),
   );
   const target = getWhatsAppGroupUrl(campaign.slug);
   if (!token || token.landingSlug !== campaign.slug || !target)
     return NextResponse.json({ ok: false }, { status: 403 });
-  return NextResponse.redirect(target, {
+  const response = NextResponse.redirect(target, {
     headers: { "Cache-Control": "no-store" },
   });
+  if (cookieName === WHATSAPP_ACCESS_COOKIE) {
+    response.cookies.set(WHATSAPP_ACCESS_COOKIE, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/",
+    });
+  }
+  return response;
 }

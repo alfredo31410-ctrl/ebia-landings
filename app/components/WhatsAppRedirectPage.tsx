@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { LandingCampaign } from "@/lib/landings";
 import type { RegistrationToken } from "@/lib/registration";
 import { trackJoinGroupWithTimeout } from "@/lib/integrations/meta-pixel";
-import { getSameOriginUrl, IA_WHATSAPP_REDIRECT_PATH } from "@/lib/same-origin-url";
+import { getSameOriginUrl } from "@/lib/same-origin-url";
 
 export function WhatsAppRedirectPage({ campaign, registration, whatsappConfigured }: { campaign: LandingCampaign; registration: RegistrationToken | null; whatsappConfigured: boolean }) {
   const [seconds, setSeconds] = useState(2);
@@ -22,7 +22,9 @@ export function WhatsAppRedirectPage({ campaign, registration, whatsappConfigure
   const navigateOnce = () => {
     if (navigationStartedRef.current) return;
     navigationStartedRef.current = true;
-    window.location.assign(getSameOriginUrl(IA_WHATSAPP_REDIRECT_PATH));
+    window.location.assign(
+      getSameOriginUrl(`/landings/${campaign.slug}/api/whatsapp/redirect`),
+    );
   };
   const redirectAutomatically = async () => {
     if (!registration || !whatsappConfigured) return;
@@ -49,7 +51,7 @@ export function WhatsAppRedirectPage({ campaign, registration, whatsappConfigure
     <p className="thanks-progress">ÚLTIMO PASO <span /></p><h1>{error ? "No pudimos abrir el grupo" : "Estamos abriendo el grupo oficial de WhatsApp…"}</h1>
     <p className="thanks-lead">{error ? "Regresa a la página anterior e inténtalo de nuevo. El enlace de acceso no está disponible o tu registro expiró." : "Cuando se abra WhatsApp, presiona “Unirme al grupo” para terminar."}</p>
     {!error && <p className="thanks-button-note">Redirigiendo en {seconds}…</p>}
-    {!error && <button className="whatsapp-button" style={{ border: 0, cursor: "pointer" }} type="button" onClick={() => void redirectManually()}>ABRIR EL GRUPO MANUALMENTE</button>}
+    {!error && <button className="whatsapp-button" style={{ border: 0, cursor: "pointer" }} type="button" onClick={() => void redirectManually()}>ABRIR EL GRUPO AHORA</button>}
     {error && <a className="whatsapp-button" href={`/landings/${campaign.slug}/gracias`}>VOLVER A GRACIAS</a>}
   </section></div></main>;
 }

@@ -3,6 +3,7 @@ import { getRegistrationSecret, hasSafeRegistrationSecret } from "./env.ts";
 
 export const REGISTRATION_COOKIE = "ebia_registration";
 export const REGISTRATION_NONCE_COOKIE = "ebia_registration_nonce";
+export const WHATSAPP_ACCESS_COOKIE = "ebia_whatsapp_access";
 const TOKEN_TTL_SECONDS = 60 * 60 * 24;
 const NONCE_TTL_SECONDS = 60 * 5;
 

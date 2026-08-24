@@ -2,14 +2,25 @@
 
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import { persistAttributionCookie } from "@/lib/attribution";
 import { getActiveCampaignClassName, getActiveCampaignEmbedUrl } from "@/lib/integrations/active-campaign";
 import { resetTrackedMetaEvent } from "@/lib/integrations/meta-pixel";
 import { requestRegistrationNonce, type RegistrationNonceResponse } from "@/lib/registration-client";
 
-type Props = { formId: string; campaign: string; metaContentName: string; thankYouPath: string };
+type Props = {
+  formId: string;
+  campaign: string;
+  metaContentName: string;
+  thankYouPath: string;
+  showIntro?: boolean;
+};
 const NONCE_RENEWAL_MARGIN_MS = 45_000;
 
-export function ActiveCampaignForm({ formId, campaign }: Props) {
+export function ActiveCampaignForm({
+  formId,
+  campaign,
+  showIntro = true,
+}: Props) {
   const root = useRef<HTMLDivElement>(null);
   const nonce = useRef<RegistrationNonceResponse | null>(null);
   const nonceRequest = useRef<Promise<RegistrationNonceResponse> | null>(null);
@@ -49,6 +60,10 @@ export function ActiveCampaignForm({ formId, campaign }: Props) {
   };
 
   useEffect(() => {
+    if (campaign === "ia-maestros") persistAttributionCookie();
+  }, [campaign]);
+
+  useEffect(() => {
     const scheduleRenewal = () => {
       if (nonceTimer.current) window.clearTimeout(nonceTimer.current);
       if (!nonce.current) return;
@@ -74,6 +89,7 @@ export function ActiveCampaignForm({ formId, campaign }: Props) {
       }
       // El nonce ya está firmado por el servidor; ActiveCampaign controla el envío
       // y su redirección posterior hacia registro-confirmado.
+      if (campaign === "ia-maestros") persistAttributionCookie();
       setError(null);
       setIsSubmitting(true);
       resetTrackedMetaEvent("CompleteRegistration", campaign, "session");
@@ -87,8 +103,8 @@ export function ActiveCampaignForm({ formId, campaign }: Props) {
   }, [campaign, isPreparing, isSubmitting]);
 
   return <>
-    <p className="form-step" aria-live="polite">PASO 1 DE 2</p>
-    <p className="form-instruction">Después de guardar tus datos pasarás al último paso: entrar al grupo oficial de WhatsApp.</p>
+    {showIntro && <><p className="form-step" aria-live="polite">PASO 1 DE 2</p>
+    <p className="form-instruction">Después de guardar tus datos pasarás al último paso: entrar al grupo oficial de WhatsApp.</p></>}
     {error && <><p className="form-error" role="alert">{error}</p><button className="form-retry" type="button" onClick={() => void refreshNonce().catch(() => undefined)} disabled={isPreparing}>REINTENTAR PREPARACIÓN</button></>}
     {isSubmitting && <p className="form-status" role="status">Procesando tu registro…</p>}
     <div ref={root} className={`${getActiveCampaignClassName(formId)} active-campaign-form`} aria-busy={isPreparing || isSubmitting} />
