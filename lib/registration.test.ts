@@ -43,6 +43,18 @@ test("el host de WhatsApp debe ser HTTPS y oficial", async () => {
   assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code#fragment";
   assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  delete process.env.WHATSAPP_GROUP_URL_IA_MAESTROS;
+  assert.equal(
+    new URL(getWhatsAppGroupUrl("ia-maestros")!).hostname,
+    "chat.whatsapp.com",
+  );
+  process.env.WHATSAPP_GROUP_URL_IA_MAESTROS =
+    "https://chat.whatsapp.com/override-code";
+  assert.equal(
+    getWhatsAppGroupUrl("ia-maestros"),
+    "https://chat.whatsapp.com/override-code",
+  );
+  delete process.env.WHATSAPP_GROUP_URL_IA_MAESTROS;
 });
 
 test("el origen público no depende de request.url en producción", async () => {

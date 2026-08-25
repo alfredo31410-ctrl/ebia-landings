@@ -61,7 +61,9 @@ WHATSAPP_GROUP_URL_IA_MAESTROS=https://chat.whatsapp.com/codigo-real
 
 `REGISTRATION_TOKEN_SECRET` debe ser aleatorio y tener al menos 32 caracteres. El
 enlace de WhatsApp debe usar HTTPS, el host `chat.whatsapp.com` y no incluir query ni
-fragmento.
+fragmento. IA Maestros cuenta con un destino predeterminado autorizado en el código;
+`WHATSAPP_GROUP_URL_IA_MAESTROS` es opcional y, cuando se configura, reemplaza ese
+destino sin necesidad de modificar el repositorio.
 
 ## Datos editoriales pendientes
 

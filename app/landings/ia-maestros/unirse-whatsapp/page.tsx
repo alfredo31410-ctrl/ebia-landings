@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { WhatsAppRedirectPage } from "@/app/components/WhatsAppRedirectPage";
+import { TeacherWhatsAppRedirectPage } from "../TeacherWhatsAppRedirectPage";
 import { getCampaign } from "@/lib/landings";
 import {
   verifyRegistrationToken,
@@ -21,7 +21,7 @@ export default async function Page() {
   const registration = token?.landingSlug === campaign.slug ? token : null;
 
   return (
-    <WhatsAppRedirectPage
+    <TeacherWhatsAppRedirectPage
       campaign={campaign}
       registration={registration}
       whatsappConfigured={Boolean(getWhatsAppGroupUrl(campaign.slug))}
