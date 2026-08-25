@@ -65,10 +65,10 @@ fragmento. IA Maestros cuenta con un destino predeterminado autorizado en el có
 `WHATSAPP_GROUP_URL_IA_MAESTROS` es opcional y, cuando se configura, reemplaza ese
 destino sin necesidad de modificar el repositorio.
 
-## Datos editoriales pendientes
+## Instructora
 
-El nombre, cargo y experiencia de la instructora están declarados como `null` en
-`lib/landings.ts`. Deben completarse únicamente cuando EBIA confirme información
-pública real. La fotografía reutilizada se encuentra en:
+La información pública confirmada muestra a Miranda Medina como Instructora EBIA.
+No se publican credenciales ni experiencia adicional sin confirmación. La fotografía
+reutilizada se encuentra en:
 
 `public/ia-desde-cero/Foto2.png`

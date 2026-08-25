@@ -196,8 +196,8 @@ export const campaigns = {
       actionLabel: "ENTRAR AL GRUPO DE WHATSAPP",
     },
     instructor: {
-      name: null,
-      role: null,
+      name: "Miranda Medina",
+      role: "Instructora EBIA",
       bio: null,
     },
   },

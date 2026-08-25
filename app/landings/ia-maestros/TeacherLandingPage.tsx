@@ -184,7 +184,7 @@ export function TeacherLandingPage({
       <section className={styles.instructorSection}>
         <div className={`${styles.shell} ${styles.instructorGrid}`}>
           <div className={styles.instructorPhoto}><div /><Image src={campaign.image.src} alt={campaign.image.alt} width={campaign.image.width} height={campaign.image.height} sizes="(max-width: 767px) 88vw, 42vw" /></div>
-          <div className={styles.instructorCopy}><p>TU GUÍA EN ESTA CLASE</p><h2>Aprende con una instructora real, paso a paso.</h2><p>Una clase creada para acompañar a docentes que quieren comenzar con ejemplos claros, sin tecnicismos innecesarios.</p>{campaign.instructor?.name ? <div className={styles.instructorMeta}><strong>{campaign.instructor.name}</strong>{campaign.instructor.role && <span>{campaign.instructor.role}</span>}{campaign.instructor.bio && <p>{campaign.instructor.bio}</p>}</div> : <small>Nombre, cargo y experiencia de la instructora: pendientes de confirmación por EBIA.</small>}</div>
+          <div className={styles.instructorCopy}><p>TU GUÍA EN ESTA CLASE</p><h2>Aprende con una instructora real, paso a paso.</h2><p>Una clase creada para acompañar a docentes que quieren comenzar con ejemplos claros, sin tecnicismos innecesarios.</p>{campaign.instructor?.name ? <div className={styles.instructorMeta}><strong>{campaign.instructor.name}</strong>{campaign.instructor.role && <span>{campaign.instructor.role}</span>}{campaign.instructor.bio && <p>{campaign.instructor.bio}</p>}</div> : <small>Clase guiada por el equipo de EBIA.</small>}</div>
         </div>
       </section>
 
