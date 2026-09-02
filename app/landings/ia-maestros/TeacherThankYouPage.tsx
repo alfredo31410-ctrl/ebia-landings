@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Brand } from "@/app/components/Brand";
-import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
+import {
+  trackMetaEvent,
+  trackMetaEventWhenReady,
+} from "@/lib/integrations/meta-pixel";
 import type { LandingCampaign } from "@/lib/landings";
 import styles from "./thanks.module.css";
 
@@ -31,6 +34,7 @@ function EventDetails({ campaign }: { campaign: LandingCampaign }) {
 
 export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign }) {
   const [state, setState] = useState<State>("validating");
+  const registrationId = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +56,7 @@ export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign })
           throw new Error("invalid_registration");
         }
         if (cancelled) return;
+        registrationId.current = body.registrationId;
         setState("ready");
         return trackMetaEventWhenReady(
           "CompleteRegistration",
@@ -78,6 +83,19 @@ export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign })
       stopTracking?.();
     };
   }, [campaign.integrations.metaContentName, campaign.slug]);
+
+  const trackWhatsAppClick = () => {
+    if (!registrationId.current) return;
+    trackMetaEvent(
+      "JoinGroup",
+      `${campaign.slug}:${registrationId.current}`,
+      {
+        content_name: campaign.integrations.metaContentName,
+        whatsappRedirectReached: true,
+      },
+      "persistent",
+    );
+  };
 
   if (state === "invalid") {
     return (
@@ -175,7 +193,8 @@ export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign })
             {state === "ready" ? (
               <a
                 className={styles.whatsappButton}
-                href={`/landings/${campaign.slug}/unirse-whatsapp`}
+                href={`/landings/${campaign.slug}/api/whatsapp/redirect`}
+                onClick={trackWhatsAppClick}
               >
                 {campaign.thanks.actionLabel}
                 <span aria-hidden="true">→</span>

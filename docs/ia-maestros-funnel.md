@@ -7,7 +7,6 @@
 - Confirmación de ActiveCampaign: `/landings/ia-maestros/registro-confirmado`
 - Gracias: `/landings/ia-maestros/gracias`
 - Consumo de conversión: `POST /landings/ia-maestros/api/registrations/consume`
-- Paso previo a WhatsApp: `/landings/ia-maestros/unirse-whatsapp`
 - Redirección server-side: `/landings/ia-maestros/api/whatsapp/redirect`
 
 ## Flujo
@@ -21,12 +20,14 @@ La ruta de confirmación valida el nonce, agrega `landing_slug` y `timestamp`, e
 las cookies temporales y crea la cookie HttpOnly que autoriza la página de gracias.
 
 Al cargar gracias, el navegador consume esa cookie en el endpoint interno. El endpoint
-la elimina y entrega otra cookie HttpOnly, de 30 minutos, que autoriza únicamente el
-paso de WhatsApp. Después de la respuesta válida se dispara `CompleteRegistration`.
+la elimina y entrega otra cookie HttpOnly, de 30 minutos, que autoriza únicamente la
+redirección a WhatsApp. Después de la respuesta válida se dispara
+`CompleteRegistration` y aparece un solo CTA.
 
-La ruta `unirse-whatsapp` dispara `JoinGroup`, espera aproximadamente 1.5 segundos y
-navega a la redirección interna. Esa redirección valida y consume la cookie de acceso
-antes de abrir el grupo configurado en servidor.
+El clic en ese CTA registra `JoinGroup` como métrica secundaria y navega directamente
+a la redirección interna, sin mostrar una segunda página ni agregar una espera. La
+redirección valida y consume la cookie de acceso antes de abrir el grupo configurado
+en servidor.
 
 ## ActiveCampaign
 
