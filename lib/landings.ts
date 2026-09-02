@@ -143,7 +143,7 @@ export const campaigns = {
     microcopy:
       "Paso 1 de 2 · Después de registrarte entrarás al grupo oficial de WhatsApp para recibir tu acceso.",
     facts: [
-      { label: "Fecha", value: "2 de septiembre" },
+      { label: "Fecha", value: "Viernes 18 de septiembre" },
       { label: "Hora", value: "6:00 PM" },
       { label: "Zona", value: "Hora CDMX" },
       { label: "Modalidad", value: "En línea · Clase gratuita" },
@@ -181,8 +181,8 @@ export const campaigns = {
       metaContentName: "IA para Maestros",
     },
     event: {
-      startsAt: "2026-09-02T18:00:00-06:00",
-      displayDate: "2 de septiembre de 2026",
+      startsAt: "2026-09-18T18:00:00-06:00",
+      displayDate: "viernes 18 de septiembre de 2026",
       displayTime: "6:00 p. m.",
       displayTimeZone: "hora CDMX",
       endsAt: null,

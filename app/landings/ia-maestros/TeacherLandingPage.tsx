@@ -121,7 +121,7 @@ export function TeacherLandingPage({
               <span><Icon name="check" />Aplicado a la enseñanza</span>
             </div>
             <div className={styles.eventFacts}>
-              <div><Icon name="calendar" /><span><small>FECHA</small><strong>2 de septiembre</strong></span></div>
+              <div><Icon name="calendar" /><span><small>FECHA</small><strong>Viernes 18 de septiembre</strong></span></div>
               <div><Icon name="clock" /><span><small>HORA</small><strong>6:00 PM · Hora CDMX</strong></span></div>
               <div><Icon name="screen" /><span><small>MODALIDAD</small><strong>En línea · Gratuita</strong></span></div>
             </div>
@@ -192,7 +192,7 @@ export function TeacherLandingPage({
 
       <section className={styles.registrationSection} id="registro-maestros">
         <div className={`${styles.shell} ${styles.registrationGrid}`}>
-          <div className={styles.registrationCopy}><p>2 DE SEPTIEMBRE · 6:00 PM · EN LÍNEA</p><h2>Da el primer paso para usar IA con más claridad.</h2><ul><li><Icon name="check" />Clase gratuita</li><li><Icon name="check" />Desde cero</li><li><Icon name="check" />Enfocada en docentes</li></ul></div>
+          <div className={styles.registrationCopy}><p>VIERNES 18 DE SEPTIEMBRE · 6:00 PM · EN LÍNEA</p><h2>Da el primer paso para usar IA con más claridad.</h2><ul><li><Icon name="check" />Clase gratuita</li><li><Icon name="check" />Desde cero</li><li><Icon name="check" />Enfocada en docentes</li></ul></div>
           <div className={styles.formCard}><span>PASO 1 DE 2</span><h2>Reserva tu lugar gratis</h2><p>Completa tus datos para registrarte. Después pasarás al último paso: entrar al grupo oficial de WhatsApp.</p><ActiveCampaignForm formId={campaign.integrations.activeCampaignFormId} campaign={campaign.slug} metaContentName={campaign.integrations.metaContentName} thankYouPath={`/landings/${campaign.slug}/gracias`} showIntro={false} /></div>
         </div>
       </section>
