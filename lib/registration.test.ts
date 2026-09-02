@@ -179,6 +179,75 @@ test("IA para Maestros prepara nonce y confirma el regreso del formulario 327", 
   setNodeEnv(originalNodeEnv);
 });
 
+test("gracias de IA para Maestros permite recargar sin duplicar CompleteRegistration", async () => {
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
+  const { createRegistrationToken } = await import("./registration.ts");
+  const { POST } = await import(
+    "../app/landings/ia-maestros/api/registrations/consume/route.ts"
+  );
+  const registration = createRegistrationToken("ia-maestros", {
+    utm_source: "meta",
+  });
+  const endpoint =
+    "https://ebiacapacitacion.com/landings/ia-maestros/api/registrations/consume";
+
+  const firstResponse = await POST(
+    new Request(endpoint, {
+      method: "POST",
+      headers: {
+        origin: "https://ebiacapacitacion.com",
+        cookie: `ebia_registration=${registration.value}`,
+      },
+    }),
+  );
+  assert.equal(firstResponse.status, 200);
+  const firstBody = (await firstResponse.json()) as {
+    registrationId: string;
+    shouldTrackCompleteRegistration: boolean;
+  };
+  assert.equal(firstBody.registrationId, registration.data.registrationId);
+  assert.equal(firstBody.shouldTrackCompleteRegistration, true);
+  const firstCookies = firstResponse.headers.get("set-cookie") || "";
+  const thankYouAccess = firstCookies.match(
+    /ebia_thank_you_access=([^;,\s]+)/,
+  )?.[1];
+  assert.ok(thankYouAccess);
+  assert.match(firstCookies, /ebia_whatsapp_access=/);
+  assert.match(firstCookies, /Max-Age=2592000/);
+
+  const reloadResponse = await POST(
+    new Request(endpoint, {
+      method: "POST",
+      headers: {
+        origin: "https://ebiacapacitacion.com",
+        cookie: `ebia_thank_you_access=${thankYouAccess}`,
+      },
+    }),
+  );
+  assert.equal(reloadResponse.status, 200);
+  const reloadBody = (await reloadResponse.json()) as {
+    registrationId: string;
+    shouldTrackCompleteRegistration: boolean;
+  };
+  assert.equal(reloadBody.registrationId, registration.data.registrationId);
+  assert.equal(reloadBody.shouldTrackCompleteRegistration, false);
+  assert.match(
+    reloadResponse.headers.get("set-cookie") || "",
+    /ebia_whatsapp_access=/,
+  );
+
+  const unconfirmedResponse = await POST(
+    new Request(endpoint, {
+      method: "POST",
+      headers: { origin: "https://ebiacapacitacion.com" },
+    }),
+  );
+  assert.equal(unconfirmedResponse.status, 403);
+  setNodeEnv(originalNodeEnv);
+});
+
 test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");

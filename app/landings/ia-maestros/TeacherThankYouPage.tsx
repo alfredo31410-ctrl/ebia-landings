@@ -51,6 +51,7 @@ export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign })
         const body = (await response.json().catch(() => ({}))) as {
           ok?: boolean;
           registrationId?: string;
+          shouldTrackCompleteRegistration?: boolean;
         };
         if (!response.ok || !body.ok || !body.registrationId) {
           throw new Error("invalid_registration");
@@ -58,6 +59,7 @@ export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign })
         if (cancelled) return;
         registrationId.current = body.registrationId;
         setState("ready");
+        if (!body.shouldTrackCompleteRegistration) return;
         return trackMetaEventWhenReady(
           "CompleteRegistration",
           `${campaign.slug}:${body.registrationId}`,
@@ -116,11 +118,11 @@ export function TeacherThankYouPage({ campaign }: { campaign: LandingCampaign })
             <span className={styles.invalidSeal} aria-hidden="true">
               !
             </span>
-            <p className={styles.eyebrow}>REGISTRO NO CONFIRMADO</p>
-            <h1 id="invalid-title">Este enlace ya no es válido</h1>
+            <p className={styles.eyebrow}>NO PUDIMOS RECUPERAR TU ACCESO</p>
+            <h1 id="invalid-title">Revisa el enlace de confirmación</h1>
             <p>
-              Esta página se habilita después de que el formulario confirma tu
-              registro. Vuelve a la clase e inténtalo nuevamente.
+              Si ya te registraste, abre nuevamente el enlace de confirmación. Tu
+              registro sigue guardado y no necesitas llenar otra vez el formulario.
             </p>
             <a className={styles.secondaryButton} href={`/landings/${campaign.slug}`}>
               VOLVER A LA CLASE

@@ -3,8 +3,10 @@ import { getRegistrationSecret, hasSafeRegistrationSecret } from "./env.ts";
 
 export const REGISTRATION_COOKIE = "ebia_registration";
 export const REGISTRATION_NONCE_COOKIE = "ebia_registration_nonce";
+export const THANK_YOU_ACCESS_COOKIE = "ebia_thank_you_access";
 export const WHATSAPP_ACCESS_COOKIE = "ebia_whatsapp_access";
 const TOKEN_TTL_SECONDS = 60 * 60 * 24;
+const CONFIRMED_ACCESS_TTL_SECONDS = 60 * 60 * 24 * 30;
 const NONCE_TTL_SECONDS = 60 * 5;
 
 export type RegistrationToken = { registrationId: string; landingSlug: string; createdAt: string; expiresAt: string; attribution: Record<string, string> };
@@ -56,6 +58,20 @@ export function createRegistrationToken(landingSlug: string, attribution: Record
   const createdAt = new Date();
   const data: RegistrationToken = { registrationId: randomUUID(), landingSlug, createdAt: createdAt.toISOString(), expiresAt: new Date(createdAt.getTime() + TOKEN_TTL_SECONDS * 1000).toISOString(), attribution };
   return { value: encode(data), data, maxAge: TOKEN_TTL_SECONDS };
+}
+
+export function createConfirmedRegistrationToken(token: RegistrationToken) {
+  const data: RegistrationToken = {
+    ...token,
+    expiresAt: new Date(
+      Date.now() + CONFIRMED_ACCESS_TTL_SECONDS * 1000,
+    ).toISOString(),
+  };
+  return {
+    value: encode(data),
+    data,
+    maxAge: CONFIRMED_ACCESS_TTL_SECONDS,
+  };
 }
 
 export function verifyRegistrationToken(value?: string | null): RegistrationToken | null {

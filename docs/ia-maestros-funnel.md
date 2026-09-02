@@ -19,10 +19,12 @@ cuando el envío es exitoso, debe redirigir a `registro-confirmado`.
 La ruta de confirmación valida el nonce, agrega `landing_slug` y `timestamp`, elimina
 las cookies temporales y crea la cookie HttpOnly que autoriza la página de gracias.
 
-Al cargar gracias, el navegador consume esa cookie en el endpoint interno. El endpoint
-la elimina y entrega otra cookie HttpOnly, de 30 minutos, que autoriza únicamente la
-redirección a WhatsApp. Después de la respuesta válida se dispara
-`CompleteRegistration` y aparece un solo CTA.
+Al cargar gracias por primera vez, el navegador consume la cookie inicial en el
+endpoint interno. El endpoint la reemplaza por una cookie HttpOnly de confirmación,
+válida durante 30 días, y entrega otra cookie HttpOnly de 30 minutos que autoriza la
+redirección a WhatsApp. Solo la primera respuesta válida autoriza disparar
+`CompleteRegistration`; las recargas restauran el acceso y el CTA sin repetir ese
+evento.
 
 El clic en ese CTA registra `JoinGroup` como métrica secundaria y navega directamente
 a la redirección interna, sin mostrar una segunda página ni agregar una espera. La
