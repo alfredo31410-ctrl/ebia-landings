@@ -3,6 +3,7 @@
 ## Rutas
 
 - Landing: `/landings/ia-maestros`
+- Inscripción: `/landings/ia-maestros/inscripcion`
 - Preparación del registro: `POST /landings/ia-maestros/api/registrations/nonce`
 - Confirmación de ActiveCampaign: `/landings/ia-maestros/registro-confirmado`
 - Gracias: `/landings/ia-maestros/gracias`
@@ -30,6 +31,26 @@ El clic en ese CTA registra `JoinGroup` como métrica secundaria y navega direct
 a la redirección interna, sin mostrar una segunda página ni agregar una espera. La
 redirección valida y consume la cookie de acceso antes de abrir el grupo configurado
 en servidor.
+
+## Inscripción de pago
+
+La ruta de venta directa presenta el producto **Inteligencia Artificial para
+Maestros: De Cero al Aula** por **$297.00 MXN** y dirige la compra al checkout oficial
+de Hotmart. La oferta incluye **3 clases prácticas en vivo**, programadas para el
+**29 y 30 de septiembre y 1 de octubre a las 6:00 PM, hora CDMX**. Conserva únicamente
+parámetros de atribución aprobados y registra
+`ViewContent` e `InitiateCheckout` en Meta Pixel cuando la integración está disponible.
+
+El checkout predeterminado es:
+
+`https://pay.hotmart.com/M107670322C?off=f4a0vm6y&checkoutMode=10`
+
+Puede reemplazarse por entorno solamente con la misma combinación autorizada de
+producto, oferta y modo de checkout:
+
+```env
+NEXT_PUBLIC_HOTMART_CHECKOUT_URL_IA_MAESTROS=
+```
 
 ## ActiveCampaign
 
