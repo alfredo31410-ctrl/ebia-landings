@@ -5,10 +5,10 @@ import {
   isTareasRegistrationId,
   TAREAS_REGISTRATION_COOKIE,
 } from "@/lib/tareas-registration";
-import { TareasThankYouRedirect } from "./TareasThankYouRedirect";
+import { TareasThankYouPage } from "./TareasThankYouPage";
 
 export const metadata: Metadata = {
-  title: "Abriendo WhatsApp | Tareas con IA",
+  title: "Registro confirmado | Tareas con IA",
   robots: { index: false, follow: false },
 };
 
@@ -17,5 +17,5 @@ export default async function Page() {
   if (!isTareasRegistrationId(registrationId)) {
     redirect("/landings/tareas-con-ia");
   }
-  return <TareasThankYouRedirect registrationId={registrationId} />;
+  return <TareasThankYouPage registrationId={registrationId} />;
 }
