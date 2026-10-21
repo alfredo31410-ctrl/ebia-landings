@@ -248,6 +248,60 @@ test("gracias de IA para Maestros permite recargar sin duplicar CompleteRegistra
   setNodeEnv(originalNodeEnv);
 });
 
+test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de servidor", async () => {
+  const originalSecret = process.env.REGISTRATION_TOKEN_SECRET;
+  delete process.env.REGISTRATION_TOKEN_SECRET;
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
+  const { GET: confirmRegistration } = await import(
+    "../app/landings/tareas-con-ia/registro-confirmado/route.ts"
+  );
+  const confirmation = await confirmRegistration(
+    new Request(
+      "https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado",
+    ),
+  );
+  assert.equal(confirmation.status, 303);
+  assert.equal(
+    confirmation.headers.get("location"),
+    "https://ebiacapacitacion.com/landings/tareas-con-ia/gracias",
+  );
+  const registrationCookie = confirmation.headers
+    .get("set-cookie")
+    ?.match(/ebia_tareas_con_ia_registration=([^;]+)/)?.[1];
+  assert.equal(registrationCookie, "confirmed");
+
+  const { GET: openWhatsApp } = await import(
+    "../app/landings/tareas-con-ia/api/whatsapp/redirect/route.ts"
+  );
+  const blocked = await openWhatsApp(
+    new Request(
+      "https://ebiacapacitacion.com/landings/tareas-con-ia/api/whatsapp/redirect",
+    ),
+  );
+  assert.equal(blocked.status, 303);
+
+  const response = await openWhatsApp(
+    new Request(
+      "https://ebiacapacitacion.com/landings/tareas-con-ia/api/whatsapp/redirect",
+      {
+        headers: {
+          cookie: `ebia_tareas_con_ia_registration=${registrationCookie}`,
+        },
+      },
+    ),
+  );
+  assert.equal(response.status, 307);
+  assert.equal(new URL(response.headers.get("location")!).hostname, "chat.whatsapp.com");
+  assert.match(
+    response.headers.get("set-cookie") || "",
+    /ebia_tareas_con_ia_registration=;/,
+  );
+  if (originalSecret === undefined) delete process.env.REGISTRATION_TOKEN_SECRET;
+  else process.env.REGISTRATION_TOKEN_SECRET = originalSecret;
+  setNodeEnv(originalNodeEnv);
+});
+
 test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");

@@ -9,7 +9,7 @@ export type EventStatus =
   | "ended";
 
 export type LandingCampaign = {
-  slug: "ia-desde-cero" | "ia-maestros";
+  slug: "ia-desde-cero" | "ia-maestros" | "tareas-con-ia";
   variant: CampaignVariant;
   seo: { title: string; description: string };
   topbar: string;
@@ -193,6 +193,79 @@ export const campaigns = {
     thanks: {
       title: "Solo falta entrar al grupo oficial de WhatsApp",
       message: "Tus datos ya fueron guardados correctamente.",
+      actionLabel: "ENTRAR AL GRUPO DE WHATSAPP",
+    },
+    instructor: {
+      name: "Miranda Medina",
+      role: "Instructora EBIA",
+      bio: null,
+    },
+  },
+  "tareas-con-ia": {
+    slug: "tareas-con-ia",
+    variant: "class",
+    seo: {
+      title: "Haz la tarea de tus hijos con IA · Clase gratuita",
+      description:
+        "Aprende a utilizar Inteligencia Artificial para explicar y acompañar las tareas de tus hijos sin resolver todo por ellos.",
+    },
+    topbar: "Clase gratuita en línea para madres y padres",
+    eyebrow: "ANTES DE LA PRÓXIMA TAREA",
+    headline: "Haz la tarea de tus hijos",
+    highlightedHeadline: "con ayuda de la IA",
+    intro:
+      "Aprende a utilizar Inteligencia Artificial para entender el tema, explicarlo con claridad y acompañar a tus hijos paso a paso.",
+    primaryCta: "REGISTRARME GRATIS",
+    secondaryCta: "Ver lo que aprenderás",
+    microcopy: "29 de octubre · 12:00 p. m. CDMX · Sin costo",
+    facts: [
+      { label: "Fecha", value: "29 DE OCTUBRE DE 2026" },
+      { label: "Hora", value: "12:00 P. M." },
+      { label: "Zona", value: "HORA CDMX" },
+      { label: "Modalidad", value: "EN LÍNEA" },
+    ],
+    image: {
+      src: "/landings/tareas-con-ia/instructora.webp",
+      alt: "Miranda Medina, instructora de EBIA",
+      width: 1024,
+      height: 1535,
+    },
+    visualNotes: ["Sin experiencia previa", "Aplicado a las tareas"],
+    section: {
+      eyebrow: "LO QUE APRENDERÁS",
+      title: "Una forma sencilla de acompañar las tareas con IA",
+      outcomes: [
+        {
+          title: "Explicaciones más claras",
+          description: "Adapta temas y ejemplos a la edad de tus hijos.",
+        },
+        {
+          title: "Práctica con propósito",
+          description: "Crea ejercicios que ayuden a comprender sin dar la respuesta.",
+        },
+        {
+          title: "Acompañamiento responsable",
+          description: "Utiliza la IA como apoyo y mantén al estudiante como protagonista.",
+        },
+      ],
+    },
+    integrations: {
+      activeCampaignFormId: "365",
+      metaContentName: "Haz la tarea de tus hijos con IA",
+    },
+    event: {
+      startsAt: "2026-10-29T12:00:00-06:00",
+      displayDate: "29 de octubre de 2026",
+      displayTime: "12:00 p. m.",
+      displayTimeZone: "hora CDMX",
+      endsAt: null,
+      registrationClosesAt: null,
+      timeZone: "America/Mexico_City",
+      whatsappEnvKey: "WHATSAPP_GROUP_URL_TAREAS_CON_IA",
+    },
+    thanks: {
+      title: "Solo falta entrar al grupo oficial de WhatsApp",
+      message: "Tus datos fueron guardados correctamente.",
       actionLabel: "ENTRAR AL GRUPO DE WHATSAPP",
     },
     instructor: {

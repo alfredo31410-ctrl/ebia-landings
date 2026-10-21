@@ -4,6 +4,7 @@ import { getCampaign, type CampaignSlug } from "./landings.ts";
 // GitHub. La variable de entorno conserva prioridad cuando esté configurada.
 const DEFAULT_WHATSAPP_GROUPS: Partial<Record<CampaignSlug, string>> = {
   "ia-maestros": "https://chat.whatsapp.com/DtMMWx78JFUKgPAVxQagxk",
+  "tareas-con-ia": "https://chat.whatsapp.com/He8WgsBxHCq5bp5fCsYccL",
 };
 
 export function getWhatsAppGroupUrl(slug: CampaignSlug) {
