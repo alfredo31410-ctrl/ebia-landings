@@ -2,7 +2,7 @@ import { NextResponse } from "next/server.js";
 import { getWhatsAppGroupUrl } from "../../../../../../lib/whatsapp.ts";
 import {
   isTareasRegistrationId,
-  TAREAS_REGISTRATION_COOKIE,
+  TAREAS_WHATSAPP_COOKIE,
 } from "../../../../../../lib/tareas-registration.ts";
 
 function cookieValue(request: Request, name: string) {
@@ -16,7 +16,7 @@ function cookieValue(request: Request, name: string) {
 
 export function GET(request: Request) {
   const confirmed = isTareasRegistrationId(
-    cookieValue(request, TAREAS_REGISTRATION_COOKIE),
+    cookieValue(request, TAREAS_WHATSAPP_COOKIE),
   );
   const target = getWhatsAppGroupUrl("tareas-con-ia");
 

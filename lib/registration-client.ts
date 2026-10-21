@@ -4,7 +4,11 @@ import { getSameOriginUrl } from "./same-origin-url.ts";
 // Centraliza la renovación para que montaje, recuperación y reintento no
 // creen solicitudes de nonce duplicadas ni almacenen datos personales.
 export async function requestRegistrationNonce(landing: string): Promise<RegistrationNonceResponse> {
-  if (landing !== "ia-desde-cero" && landing !== "ia-maestros")
+  if (
+    landing !== "ia-desde-cero" &&
+    landing !== "ia-maestros" &&
+    landing !== "tareas-con-ia"
+  )
     throw new Error("unsupported_landing");
   const response = await fetch(
     getSameOriginUrl(`/landings/${landing}/api/registrations/nonce`),

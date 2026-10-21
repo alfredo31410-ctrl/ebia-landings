@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Script from "next/script";
 import { useCallback, useEffect } from "react";
 import { Brand } from "@/app/components/Brand";
+import { ActiveCampaignForm } from "@/app/components/forms/ActiveCampaignForm";
 import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
 import styles from "./page.module.css";
 
@@ -133,7 +133,7 @@ export function TareasLandingPage() {
             Haz la tarea de tus hijos
             <span>con ayuda de la IA</span>
           </h1>
-          <p className={styles.heroLead}>
+          <p className={styles.heroIntro}>
             Deja de pasar horas buscando cómo explicarlo. Aprende a utilizar
             Inteligencia Artificial para entender el tema y acompañarlos paso a paso,
             <strong> sin resolver todo por ellos.</strong>
@@ -291,12 +291,12 @@ export function TareasLandingPage() {
               <div><dt>Horario</dt><dd>12:00 p. m. CDMX</dd></div>
               <div><dt>Modalidad</dt><dd>En línea</dd></div>
             </dl>
-            <div className="_form_365" />
-            <Script
-              id="active-campaign-form-365"
-              src="https://cefincapacitacion.activehosted.com/f/embed.php?id=365"
-              strategy="afterInteractive"
-              charSet="utf-8"
+            <ActiveCampaignForm
+              formId="365"
+              campaign={SLUG}
+              metaContentName="Haz la tarea de tus hijos con IA"
+              thankYouPath="/landings/tareas-con-ia/gracias"
+              showIntro={false}
             />
           </aside>
         </div>

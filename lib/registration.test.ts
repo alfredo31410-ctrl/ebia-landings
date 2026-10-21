@@ -253,12 +253,35 @@ test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de s
   delete process.env.REGISTRATION_TOKEN_SECRET;
   const originalNodeEnv = process.env.NODE_ENV;
   setNodeEnv("production");
+  const { POST: prepareRegistration } = await import(
+    "../app/landings/tareas-con-ia/api/registrations/nonce/route.ts"
+  );
+  const preparation = await prepareRegistration(
+    new Request(
+      "https://ebiacapacitacion.com/landings/tareas-con-ia/api/registrations/nonce",
+      {
+        method: "POST",
+        headers: {
+          origin: "https://ebiacapacitacion.com",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ landing: "tareas-con-ia" }),
+      },
+    ),
+  );
+  assert.equal(preparation.status, 200);
+  const nonceCookie = preparation.headers
+    .get("set-cookie")
+    ?.match(/ebia_tareas_con_ia_nonce=([^;]+)/)?.[1];
+  assert.ok(nonceCookie);
+
   const { GET: confirmRegistration } = await import(
     "../app/landings/tareas-con-ia/registro-confirmado/route.ts"
   );
   const confirmation = await confirmRegistration(
     new Request(
       "https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado",
+      { headers: { cookie: `ebia_tareas_con_ia_nonce=${nonceCookie}` } },
     ),
   );
   assert.equal(confirmation.status, 303);
@@ -271,6 +294,38 @@ test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de s
     ?.match(/ebia_tareas_con_ia_registration=([^;]+)/)?.[1];
   const { isTareasRegistrationId } = await import("./tareas-registration.ts");
   assert.equal(isTareasRegistrationId(registrationCookie), true);
+
+  const { POST: consumeRegistration } = await import(
+    "../app/landings/tareas-con-ia/api/registrations/consume/route.ts"
+  );
+  const consumed = await consumeRegistration(
+    new Request(
+      "https://ebiacapacitacion.com/landings/tareas-con-ia/api/registrations/consume",
+      {
+        method: "POST",
+        headers: {
+          origin: "https://ebiacapacitacion.com",
+          cookie: `ebia_tareas_con_ia_registration=${registrationCookie}`,
+        },
+      },
+    ),
+  );
+  assert.equal(consumed.status, 200);
+  const consumedBody = (await consumed.json()) as {
+    registrationId: string;
+    shouldTrackCompleteRegistration: boolean;
+  };
+  assert.equal(consumedBody.registrationId, registrationCookie);
+  assert.equal(consumedBody.shouldTrackCompleteRegistration, true);
+  const consumedCookies = consumed.headers.get("set-cookie") || "";
+  const thankYouCookie = consumedCookies.match(
+    /ebia_tareas_con_ia_thank_you=([^;,\s]+)/,
+  )?.[1];
+  const whatsappCookie = consumedCookies.match(
+    /ebia_tareas_con_ia_whatsapp=([^;,\s]+)/,
+  )?.[1];
+  assert.ok(thankYouCookie);
+  assert.ok(whatsappCookie);
 
   const { GET: openWhatsApp } = await import(
     "../app/landings/tareas-con-ia/api/whatsapp/redirect/route.ts"
@@ -287,7 +342,7 @@ test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de s
       "https://ebiacapacitacion.com/landings/tareas-con-ia/api/whatsapp/redirect",
       {
         headers: {
-          cookie: `ebia_tareas_con_ia_registration=${registrationCookie}`,
+          cookie: `ebia_tareas_con_ia_whatsapp=${whatsappCookie}`,
         },
       },
     ),
@@ -295,33 +350,71 @@ test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de s
   assert.equal(response.status, 307);
   assert.equal(new URL(response.headers.get("location")!).hostname, "chat.whatsapp.com");
   assert.equal(response.headers.get("set-cookie"), null);
+
+  const reload = await consumeRegistration(
+    new Request(
+      "https://ebiacapacitacion.com/landings/tareas-con-ia/api/registrations/consume",
+      {
+        method: "POST",
+        headers: {
+          origin: "https://ebiacapacitacion.com",
+          cookie: `ebia_tareas_con_ia_thank_you=${thankYouCookie}`,
+        },
+      },
+    ),
+  );
+  const reloadBody = (await reload.json()) as {
+    registrationId: string;
+    shouldTrackCompleteRegistration: boolean;
+  };
+  assert.equal(reloadBody.registrationId, registrationCookie);
+  assert.equal(reloadBody.shouldTrackCompleteRegistration, false);
   if (originalSecret === undefined) delete process.env.REGISTRATION_TOKEN_SECRET;
   else process.env.REGISTRATION_TOKEN_SECRET = originalSecret;
   setNodeEnv(originalNodeEnv);
 });
 
-test("Tareas con IA reutiliza el identificador al recargar la confirmación", async () => {
+test("Tareas con IA crea un identificador nuevo por cada envío confirmado", async () => {
   const originalNodeEnv = process.env.NODE_ENV;
   setNodeEnv("production");
-  const { GET } = await import(
+  const { POST: prepareRegistration } = await import(
+    "../app/landings/tareas-con-ia/api/registrations/nonce/route.ts"
+  );
+  const { GET: confirmRegistration } = await import(
     "../app/landings/tareas-con-ia/registro-confirmado/route.ts"
   );
-  const first = await GET(
-    new Request("https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado"),
-  );
-  const registrationId = first.headers
-    .get("set-cookie")
-    ?.match(/ebia_tareas_con_ia_registration=([^;]+)/)?.[1];
-  assert.ok(registrationId);
-  const reload = await GET(
-    new Request("https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado", {
-      headers: { cookie: `ebia_tareas_con_ia_registration=${registrationId}` },
-    }),
-  );
-  assert.match(
-    reload.headers.get("set-cookie") || "",
-    new RegExp(`ebia_tareas_con_ia_registration=${registrationId}`),
-  );
+  const ids: string[] = [];
+  for (let index = 0; index < 2; index += 1) {
+    const preparation = await prepareRegistration(
+      new Request(
+        "https://ebiacapacitacion.com/landings/tareas-con-ia/api/registrations/nonce",
+        {
+          method: "POST",
+          headers: {
+            origin: "https://ebiacapacitacion.com",
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ landing: "tareas-con-ia" }),
+        },
+      ),
+    );
+    const nonce = preparation.headers
+      .get("set-cookie")
+      ?.match(/ebia_tareas_con_ia_nonce=([^;]+)/)?.[1];
+    assert.ok(nonce);
+    const confirmation = await confirmRegistration(
+      new Request(
+        "https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado",
+        { headers: { cookie: `ebia_tareas_con_ia_nonce=${nonce}` } },
+      ),
+    );
+    const id = confirmation.headers
+      .get("set-cookie")
+      ?.match(/ebia_tareas_con_ia_registration=([^;]+)/)?.[1];
+    assert.ok(id);
+    ids.push(id);
+  }
+  assert.notEqual(ids[0], ids[1]);
   setNodeEnv(originalNodeEnv);
 });
 
