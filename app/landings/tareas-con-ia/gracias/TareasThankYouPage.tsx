@@ -5,6 +5,7 @@ import { Brand } from "@/app/components/Brand";
 import {
   hasTrackedMetaEvent,
   trackMetaEvent,
+  trackMetaEventWhenReady,
 } from "@/lib/integrations/meta-pixel";
 import styles from "./thanks.module.css";
 
@@ -18,6 +19,7 @@ export function TareasThankYouPage() {
 
   useEffect(() => {
     let active = true;
+    let stopTracking: void | (() => void);
     const consumeRegistration = async () => {
       try {
         const response = await fetch(
@@ -27,7 +29,6 @@ export function TareasThankYouPage() {
         const body = (await response.json().catch(() => ({}))) as {
           ok?: boolean;
           registrationId?: string;
-          shouldTrackCompleteRegistration?: boolean;
         };
         if (!response.ok || !body.ok || !body.registrationId) {
           throw new Error("invalid_registration");
@@ -35,6 +36,19 @@ export function TareasThankYouPage() {
 
         registrationId.current = body.registrationId;
         if (active) setState("ready");
+        stopTracking = trackMetaEventWhenReady(
+          "CompleteRegistration",
+          `${CAMPAIGN}:${body.registrationId}`,
+          {
+            content_name: "Haz la tarea de tus hijos con IA",
+            content_category: "Registro ActiveCampaign + WhatsApp",
+            status: "completed",
+            value: 0,
+            currency: "MXN",
+          },
+          "persistent",
+          40,
+        );
       } catch {
         if (active) setState("invalid");
       }
@@ -42,6 +56,7 @@ export function TareasThankYouPage() {
     void consumeRegistration();
     return () => {
       active = false;
+      stopTracking?.();
     };
   }, []);
 
