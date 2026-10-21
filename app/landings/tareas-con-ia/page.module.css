@@ -884,6 +884,10 @@
   font-weight: 800;
 }
 
+.formAnchor {
+  scroll-margin-top: 16px;
+}
+
 /* ActiveCampaign fija 14px con !important y pisa el espacio que calcula
    intl-tel-input. Esta excepción afecta únicamente al campo telefónico. */
 .registrationCard :global(.iti input#phone.iti__tel-input[name="phone-iti"]) {

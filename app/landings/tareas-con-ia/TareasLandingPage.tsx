@@ -95,7 +95,10 @@ export function TareasLandingPage() {
       },
       "session",
     );
-    document.getElementById("registro-tareas")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("formulario-tareas")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }, []);
 
   return (
@@ -291,13 +294,15 @@ export function TareasLandingPage() {
               <div><dt>Horario</dt><dd>12:00 p. m. CDMX</dd></div>
               <div><dt>Modalidad</dt><dd>En línea</dd></div>
             </dl>
-            <ActiveCampaignForm
-              formId="365"
-              campaign={SLUG}
-              metaContentName="Haz la tarea de tus hijos con IA"
-              thankYouPath="/landings/tareas-con-ia/gracias"
-              showIntro={false}
-            />
+            <div id="formulario-tareas" className={styles.formAnchor}>
+              <ActiveCampaignForm
+                formId="365"
+                campaign={SLUG}
+                metaContentName="Haz la tarea de tus hijos con IA"
+                thankYouPath="/landings/tareas-con-ia/gracias"
+                showIntro={false}
+              />
+            </div>
           </aside>
         </div>
       </section>
