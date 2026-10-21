@@ -81,7 +81,7 @@ export function TareasLandingPage() {
       trackMetaEventWhenReady("ViewContent", SLUG, {
         content_name: "Haz la tarea de tus hijos con IA",
         content_category: "Clase gratuita para madres y padres",
-      }),
+      }, "session"),
     [],
   );
 

@@ -1,11 +1,11 @@
-export type MetaStandardEvent = "ViewContent" | "CompleteRegistration" | "InitiateCheckout";
+export type MetaStandardEvent = "ViewContent" | "CompleteRegistration" | "InitiateCheckout" | "Lead";
 export type MetaCustomEvent = "RegistrationStart" | "WhatsAppGroupClick" | "JoinGroup";
 export type MetaEvent = MetaStandardEvent | MetaCustomEvent;
 export type MetaEventParams = Record<string, string | number | boolean | undefined>;
 export type DedupeScope = "persistent" | "session" | "none";
 
 const STORAGE_PREFIX = "ebia:meta:v1";
-const STANDARD_EVENTS = new Set<MetaEvent>(["ViewContent", "CompleteRegistration", "InitiateCheckout"]);
+const STANDARD_EVENTS = new Set<MetaEvent>(["ViewContent", "CompleteRegistration", "InitiateCheckout", "Lead"]);
 
 function storageFor(scope: DedupeScope): Storage | null {
   if (typeof window === "undefined" || scope === "none") return null;
@@ -39,11 +39,17 @@ export function resetTrackedMetaEvent(event: MetaEvent, campaign: string, scope:
   } catch {}
 }
 
-export function trackMetaEvent(event: MetaEvent, campaign: string, params: MetaEventParams = {}, scope: DedupeScope = "persistent") {
+export function trackMetaEvent(
+  event: MetaEvent,
+  campaign: string,
+  params: MetaEventParams = {},
+  scope: DedupeScope = "persistent",
+  eventIdOverride?: string,
+) {
   if (typeof window === "undefined" || typeof window.fbq !== "function") return false;
   const storage = storageFor(scope);
   if (storage && hasTrackedMetaEvent(event, campaign, scope)) return false;
-  const eventId = stableEventId(event, campaign, storage);
+  const eventId = eventIdOverride || stableEventId(event, campaign, storage);
   const payload = { content_name: campaign, ...params };
   if (STANDARD_EVENTS.has(event)) window.fbq("track", event, payload, { eventID: eventId });
   else window.fbq("trackCustom", event, payload, { eventID: eventId });
@@ -63,25 +69,55 @@ export function trackMetaEventWhenReady(event: MetaEvent, campaign: string, para
   return () => { if (timer) window.clearTimeout(timer); };
 }
 
-export function trackJoinGroupWithTimeout(campaign: string, registrationId: string, maxWaitMs = 1_200): Promise<boolean> {
-  const scope = `${campaign}:${registrationId}`;
-  if (hasTrackedMetaEvent("JoinGroup", scope, "persistent")) return Promise.resolve(true);
+export function trackMetaEventWithTimeout(
+  event: MetaEvent,
+  campaign: string,
+  params: MetaEventParams = {},
+  scope: DedupeScope = "persistent",
+  maxWaitMs = 1_200,
+  eventIdOverride?: string,
+): Promise<boolean> {
+  if (hasTrackedMetaEvent(event, campaign, scope)) return Promise.resolve(true);
   return new Promise((resolve) => {
     const startedAt = Date.now();
     let timer: number | undefined;
     const attempt = () => {
-      // Meta bloqueado no puede impedir la apertura: el timeout siempre resuelve.
-      if (trackMetaEvent("JoinGroup", scope, { content_name: campaign, whatsappRedirectReached: true }, "persistent") || hasTrackedMetaEvent("JoinGroup", scope, "persistent")) { if (timer) window.clearTimeout(timer); resolve(true); return; }
+      if (
+        trackMetaEvent(event, campaign, params, scope, eventIdOverride) ||
+        hasTrackedMetaEvent(event, campaign, scope)
+      ) {
+        if (timer) window.clearTimeout(timer);
+        resolve(true);
+        return;
+      }
       const remaining = maxWaitMs - (Date.now() - startedAt);
-      if (remaining <= 0) { resolve(false); return; }
+      if (remaining <= 0) {
+        resolve(false);
+        return;
+      }
       timer = window.setTimeout(attempt, Math.min(100, remaining));
     };
     attempt();
   });
 }
 
-export function getMetaPixelBootstrap(pixelId: string) {
-  return `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${pixelId}');`;
+export function trackJoinGroupWithTimeout(campaign: string, registrationId: string, maxWaitMs = 1_200): Promise<boolean> {
+  const scope = `${campaign}:${registrationId}`;
+  // Meta bloqueado no puede impedir la apertura: el timeout siempre resuelve.
+  return trackMetaEventWithTimeout(
+    "JoinGroup",
+    scope,
+    { content_name: campaign, whatsappRedirectReached: true },
+    "persistent",
+    maxWaitMs,
+  );
+}
+
+export function getMetaPixelBootstrap(pixelId: string, disableAutoConfig = false) {
+  const autoConfig = disableAutoConfig
+    ? `fbq('set','autoConfig',false,'${pixelId}');`
+    : "";
+  return `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');${autoConfig}fbq('init','${pixelId}');`;
 }
 
 export const getMetaPixelNoscriptUrl = (pixelId: string) => `https://www.facebook.com/tr?id=${encodeURIComponent(pixelId)}&ev=PageView&noscript=1`;

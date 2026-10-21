@@ -269,7 +269,8 @@ test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de s
   const registrationCookie = confirmation.headers
     .get("set-cookie")
     ?.match(/ebia_tareas_con_ia_registration=([^;]+)/)?.[1];
-  assert.equal(registrationCookie, "confirmed");
+  const { isTareasRegistrationId } = await import("./tareas-registration.ts");
+  assert.equal(isTareasRegistrationId(registrationCookie), true);
 
   const { GET: openWhatsApp } = await import(
     "../app/landings/tareas-con-ia/api/whatsapp/redirect/route.ts"
@@ -293,13 +294,41 @@ test("Tareas con IA confirma el formulario 365 y abre WhatsApp sin secretos de s
   );
   assert.equal(response.status, 307);
   assert.equal(new URL(response.headers.get("location")!).hostname, "chat.whatsapp.com");
-  assert.match(
-    response.headers.get("set-cookie") || "",
-    /ebia_tareas_con_ia_registration=;/,
-  );
+  assert.equal(response.headers.get("set-cookie"), null);
   if (originalSecret === undefined) delete process.env.REGISTRATION_TOKEN_SECRET;
   else process.env.REGISTRATION_TOKEN_SECRET = originalSecret;
   setNodeEnv(originalNodeEnv);
+});
+
+test("Tareas con IA reutiliza el identificador al recargar la confirmación", async () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+  setNodeEnv("production");
+  const { GET } = await import(
+    "../app/landings/tareas-con-ia/registro-confirmado/route.ts"
+  );
+  const first = await GET(
+    new Request("https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado"),
+  );
+  const registrationId = first.headers
+    .get("set-cookie")
+    ?.match(/ebia_tareas_con_ia_registration=([^;]+)/)?.[1];
+  assert.ok(registrationId);
+  const reload = await GET(
+    new Request("https://ebiacapacitacion.com/landings/tareas-con-ia/registro-confirmado", {
+      headers: { cookie: `ebia_tareas_con_ia_registration=${registrationId}` },
+    }),
+  );
+  assert.match(
+    reload.headers.get("set-cookie") || "",
+    new RegExp(`ebia_tareas_con_ia_registration=${registrationId}`),
+  );
+  setNodeEnv(originalNodeEnv);
+});
+
+test("el pixel puede desactivar la configuración automática antes de inicializarse", async () => {
+  const { getMetaPixelBootstrap } = await import("./integrations/meta-pixel.ts");
+  const bootstrap = getMetaPixelBootstrap("123", true);
+  assert.match(bootstrap, /fbq\('set','autoConfig',false,'123'\);fbq\('init','123'\)/);
 });
 
 test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server.js";
 import { getWhatsAppGroupUrl } from "../../../../../../lib/whatsapp.ts";
-import { TAREAS_REGISTRATION_COOKIE } from "../../../../../../lib/tareas-registration.ts";
+import {
+  isTareasRegistrationId,
+  TAREAS_REGISTRATION_COOKIE,
+} from "../../../../../../lib/tareas-registration.ts";
 
 function cookieValue(request: Request, name: string) {
   return request.headers
@@ -12,8 +15,9 @@ function cookieValue(request: Request, name: string) {
 }
 
 export function GET(request: Request) {
-  const confirmed =
-    cookieValue(request, TAREAS_REGISTRATION_COOKIE) === "confirmed";
+  const confirmed = isTareasRegistrationId(
+    cookieValue(request, TAREAS_REGISTRATION_COOKIE),
+  );
   const target = getWhatsAppGroupUrl("tareas-con-ia");
 
   if (!confirmed || !target) {
@@ -25,12 +29,5 @@ export function GET(request: Request) {
 
   const response = NextResponse.redirect(target, 307);
   response.headers.set("Cache-Control", "no-store");
-  response.cookies.set(TAREAS_REGISTRATION_COOKIE, "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 0,
-    path: "/",
-  });
   return response;
 }

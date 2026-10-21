@@ -7,6 +7,7 @@ import { getMetaPixelBootstrap, getMetaPixelNoscriptUrl } from "@/lib/integratio
 
 export function MetaPixel({ pixelId }: { pixelId?: string }) {
   const pathname = usePathname();
+  const disableAutoConfig = pathname.startsWith("/landings/tareas-con-ia");
   const lastPath = useRef<string | undefined>(undefined);
   useEffect(() => {
     if (!pixelId || lastPath.current === pathname) return;
@@ -20,5 +21,5 @@ export function MetaPixel({ pixelId }: { pixelId?: string }) {
     return () => { if (timer) window.clearTimeout(timer); };
   }, [pathname, pixelId]);
   if (!pixelId) return null;
-  return <><Script id="ebia-meta-pixel" strategy="afterInteractive">{getMetaPixelBootstrap(pixelId)}</Script><noscript><img className="tracking-pixel" height="1" width="1" src={getMetaPixelNoscriptUrl(pixelId)} alt="" /></noscript></>;
+  return <><Script id="ebia-meta-pixel" strategy="afterInteractive">{getMetaPixelBootstrap(pixelId, disableAutoConfig)}</Script><noscript><img className="tracking-pixel" height="1" width="1" src={getMetaPixelNoscriptUrl(pixelId)} alt="" /></noscript></>;
 }
