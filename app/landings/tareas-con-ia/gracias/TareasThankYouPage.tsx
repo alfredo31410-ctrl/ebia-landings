@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { Brand } from "@/app/components/Brand";
 import {
+  hasTrackedMetaEvent,
   trackMetaEvent,
-  trackMetaEventWhenReady,
 } from "@/lib/integrations/meta-pixel";
 import styles from "./thanks.module.css";
 
@@ -14,6 +14,7 @@ type State = "validating" | "ready" | "invalid";
 export function TareasThankYouPage() {
   const [state, setState] = useState<State>("validating");
   const registrationId = useRef<string | null>(null);
+  const openingWhatsApp = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -34,22 +35,6 @@ export function TareasThankYouPage() {
 
         registrationId.current = body.registrationId;
         if (active) setState("ready");
-        if (body.shouldTrackCompleteRegistration) {
-          // No se cancela al desmontar: una confirmación válida debe conservar su
-          // conversión incluso si React vuelve a ejecutar el efecto o el usuario sale.
-          trackMetaEventWhenReady(
-            "CompleteRegistration",
-            `${CAMPAIGN}:${body.registrationId}`,
-            {
-              content_name: "Haz la tarea de tus hijos con IA",
-              content_category: "Registro ActiveCampaign",
-              status: "completed",
-              value: 0,
-              currency: "MXN",
-            },
-            "persistent",
-          );
-        }
       } catch {
         if (active) setState("invalid");
       }
@@ -60,17 +45,46 @@ export function TareasThankYouPage() {
     };
   }, []);
 
-  const trackWhatsAppClick = () => {
+  const completeRegistration = async (
+    event: MouseEvent<HTMLAnchorElement>,
+  ) => {
     if (!registrationId.current) return;
-    trackMetaEvent(
-      "JoinGroup",
-      `${CAMPAIGN}:${registrationId.current}`,
-      {
-        content_name: "Haz la tarea de tus hijos con IA",
-        whatsappRedirectReached: true,
-      },
-      "persistent",
-    );
+    event.preventDefault();
+    if (openingWhatsApp.current) return;
+    openingWhatsApp.current = true;
+    const target = event.currentTarget.href;
+    const scope = `${CAMPAIGN}:${registrationId.current}`;
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < 1_200) {
+      const completed =
+        trackMetaEvent(
+          "CompleteRegistration",
+          scope,
+          {
+            content_name: "Haz la tarea de tus hijos con IA",
+            content_category: "Registro ActiveCampaign + WhatsApp",
+            status: "completed",
+            value: 0,
+            currency: "MXN",
+          },
+          "persistent",
+        ) || hasTrackedMetaEvent("CompleteRegistration", scope, "persistent");
+      const joined =
+        trackMetaEvent(
+          "JoinGroup",
+          scope,
+          {
+            content_name: "Haz la tarea de tus hijos con IA",
+            whatsappRedirectReached: true,
+          },
+          "persistent",
+        ) || hasTrackedMetaEvent("JoinGroup", scope, "persistent");
+      if (completed && joined) break;
+      await new Promise((resolve) => window.setTimeout(resolve, 100));
+    }
+
+    window.location.assign(target);
   };
 
   return (
@@ -108,7 +122,7 @@ export function TareasThankYouPage() {
           {state === "ready" ? (
             <a
               href="/landings/tareas-con-ia/api/whatsapp/redirect"
-              onClick={trackWhatsAppClick}
+              onClick={completeRegistration}
             >
               COMPLETAR MI REGISTRO EN WHATSAPP <span aria-hidden="true">→</span>
             </a>
