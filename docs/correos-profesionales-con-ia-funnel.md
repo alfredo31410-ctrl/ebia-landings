@@ -18,16 +18,11 @@
 
 ## ActiveCampaign
 
-El ID del formulario no se incluye en el arte de campaña y debe configurarse antes de
-publicar. La landing muestra un estado de apertura próxima mientras la variable está
-vacía.
+La landing carga el formulario `379` desde la cuenta `cefincapacitacion`. El ID está
+versionado en `lib/landings.ts` y no requiere una variable de Vercel.
 
-```env
-NEXT_PUBLIC_ACTIVE_CAMPAIGN_FORM_ID_CORREOS_PROFESIONALES=
-```
-
-En ActiveCampaign, el formulario elegido debe redirigir después de un registro
-exitoso a:
+El componente también instala un respaldo de redirección mediante el callback de
+éxito del embed. Después de un registro válido, el navegador continúa a:
 
 `https://ebiacapacitacion.com/landings/correos-profesionales-con-ia/registro-confirmado`
 
@@ -44,8 +39,9 @@ crear o actualizar una variable en Vercel. El enlace debe utilizar HTTPS, el hos
 
 ## Conversión
 
-La landing registra `ViewContent` y `RegistrationStart`. El regreso válido desde
-ActiveCampaign crea una cookie HttpOnly temporal. La página de gracias consume esa
+La landing registra `ViewContent`. `RegistrationStart` se registra al pulsar un CTA y
+se confirma también al enviar el formulario, sin duplicarlo por sesión. El regreso
+válido desde ActiveCampaign crea una cookie HttpOnly temporal. La página de gracias consume esa
 cookie una sola vez para registrar `CompleteRegistration`, conserva el acceso de
 recarga durante 30 días y emite un acceso de 30 minutos a la redirección server-side
 de WhatsApp. El clic al grupo registra `JoinGroup` sin exponer el destino en el

@@ -299,7 +299,7 @@ export function TareasLandingPage() {
                 formId="365"
                 campaign={SLUG}
                 metaContentName="Haz la tarea de tus hijos con IA"
-                thankYouPath="/landings/tareas-con-ia/gracias"
+                confirmationPath="/landings/tareas-con-ia/registro-confirmado"
                 showIntro={false}
               />
             </div>

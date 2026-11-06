@@ -197,7 +197,7 @@ export function CorreosLandingPage({
           <div className={styles.formCard}>
             <span>PASO 1 DE 2</span><h2>Reserva tu lugar gratis</h2><p>Completa tus datos. Después entrarás al grupo oficial de WhatsApp para recibir el acceso.</p>
             {campaign.integrations.activeCampaignFormId ? (
-              <ActiveCampaignForm formId={campaign.integrations.activeCampaignFormId} campaign={campaign.slug} metaContentName={campaign.integrations.metaContentName} thankYouPath={`/landings/${campaign.slug}/gracias`} showIntro={false} />
+              <ActiveCampaignForm formId={campaign.integrations.activeCampaignFormId} campaign={campaign.slug} metaContentName={campaign.integrations.metaContentName} confirmationPath={`/landings/${campaign.slug}/registro-confirmado`} showIntro={false} />
             ) : (
               <div className={styles.formPending} role="status"><strong>El registro abrirá muy pronto.</strong><span>Vuelve en breve para reservar tu lugar.</span></div>
             )}

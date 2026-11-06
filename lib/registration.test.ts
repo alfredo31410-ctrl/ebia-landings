@@ -430,6 +430,62 @@ test("el pixel puede desactivar la configuración automática antes de inicializ
   assert.match(bootstrap, /fbq\('set','autoConfig',false,'123'\);fbq\('init','123'\)/);
 });
 
+test("el tracking de Correos distingue eventos estándar, personalizados y duplicados", async () => {
+  const values = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+    removeItem: (key: string) => values.delete(key),
+  } as unknown as Storage;
+  const calls: unknown[][] = [];
+  const originalWindow = globalThis.window;
+  Object.defineProperty(globalThis, "window", {
+    configurable: true,
+    value: {
+      fbq: (...args: unknown[]) => calls.push(args),
+      localStorage: storage,
+      sessionStorage: storage,
+      dispatchEvent: () => true,
+    },
+  });
+  try {
+    const { trackMetaEvent } = await import("./integrations/meta-pixel.ts");
+    const campaign = "correos-profesionales-con-ia";
+    assert.equal(trackMetaEvent("ViewContent", campaign), true);
+    assert.equal(trackMetaEvent("ViewContent", campaign), false);
+    assert.equal(
+      trackMetaEvent("RegistrationStart", campaign, {}, "session"),
+      true,
+    );
+    assert.equal(
+      trackMetaEvent("RegistrationStart", campaign, {}, "session"),
+      false,
+    );
+    assert.equal(
+      trackMetaEvent("CompleteRegistration", `${campaign}:registro-1`),
+      true,
+    );
+    assert.equal(trackMetaEvent("JoinGroup", `${campaign}:registro-1`), true);
+    assert.deepEqual(
+      calls.map((call) => [call[0], call[1]]),
+      [
+        ["track", "ViewContent"],
+        ["trackCustom", "RegistrationStart"],
+        ["track", "CompleteRegistration"],
+        ["trackCustom", "JoinGroup"],
+      ],
+    );
+  } finally {
+    if (originalWindow === undefined)
+      delete (globalThis as { window?: unknown }).window;
+    else
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: originalWindow,
+      });
+  }
+});
+
 test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");
@@ -450,6 +506,7 @@ test("Correos profesionales con IA expone la fecha y prepara su registro", async
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { getCampaign, getEventStatus } = await import("./landings.ts");
   const campaign = getCampaign("correos-profesionales-con-ia");
+  assert.equal(campaign.integrations.activeCampaignFormId, "379");
   assert.equal(campaign.event.startsAt, "2026-11-10T13:00:00-06:00");
   assert.equal(
     getEventStatus(campaign, new Date("2026-11-06T12:00:00-06:00")),

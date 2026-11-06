@@ -329,9 +329,7 @@ export const campaigns = {
       ],
     },
     integrations: {
-      activeCampaignFormId:
-        process.env.NEXT_PUBLIC_ACTIVE_CAMPAIGN_FORM_ID_CORREOS_PROFESIONALES ||
-        "",
+      activeCampaignFormId: "379",
       metaContentName: "Correos profesionales con IA",
     },
     event: {

@@ -4,14 +4,17 @@ import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { persistAttributionCookie } from "@/lib/attribution";
 import { getActiveCampaignClassName, getActiveCampaignEmbedUrl } from "@/lib/integrations/active-campaign";
-import { resetTrackedMetaEvent } from "@/lib/integrations/meta-pixel";
+import {
+  resetTrackedMetaEvent,
+  trackMetaEventWhenReady,
+} from "@/lib/integrations/meta-pixel";
 import { requestRegistrationNonce, type RegistrationNonceResponse } from "@/lib/registration-client";
 
 type Props = {
   formId: string;
   campaign: string;
   metaContentName: string;
-  thankYouPath: string;
+  confirmationPath: string;
   showIntro?: boolean;
 };
 const NONCE_RENEWAL_MARGIN_MS = 45_000;
@@ -19,6 +22,8 @@ const NONCE_RENEWAL_MARGIN_MS = 45_000;
 export function ActiveCampaignForm({
   formId,
   campaign,
+  metaContentName,
+  confirmationPath,
   showIntro = true,
 }: Props) {
   const root = useRef<HTMLDivElement>(null);
@@ -68,6 +73,21 @@ export function ActiveCampaignForm({
   }, [campaign]);
 
   useEffect(() => {
+    const previousCallback = window._form_callback;
+    const redirectAfterSuccess = (id: string) => {
+      previousCallback?.(id);
+      const submittedForm = document.getElementById(`_form_${id}_`);
+      if (!submittedForm || !root.current?.contains(submittedForm)) return;
+      window.location.assign(confirmationPath);
+    };
+    window._form_callback = redirectAfterSuccess;
+    return () => {
+      if (window._form_callback === redirectAfterSuccess)
+        window._form_callback = previousCallback;
+    };
+  }, [confirmationPath]);
+
+  useEffect(() => {
     const scheduleRenewal = () => {
       if (nonceTimer.current) window.clearTimeout(nonceTimer.current);
       if (!nonce.current) return;
@@ -98,6 +118,16 @@ export function ActiveCampaignForm({
         campaign === "correos-profesionales-con-ia"
       )
         persistAttributionCookie();
+      trackMetaEventWhenReady(
+        "RegistrationStart",
+        campaign,
+        {
+          content_name: metaContentName,
+          content_category: "Formulario ActiveCampaign",
+          trigger: "form_submit",
+        },
+        "session",
+      );
       setError(null);
       setIsSubmitting(true);
       resetTrackedMetaEvent("CompleteRegistration", campaign, "session");
@@ -108,7 +138,7 @@ export function ActiveCampaignForm({
     element.addEventListener("submit", lockForm, true);
     applyState();
     return () => { observer.disconnect(); element.removeEventListener("submit", lockForm, true); };
-  }, [campaign, isPreparing, isSubmitting]);
+  }, [campaign, isPreparing, isSubmitting, metaContentName]);
 
   return <>
     {showIntro && <><p className="form-step" aria-live="polite">PASO 1 DE 2</p>
