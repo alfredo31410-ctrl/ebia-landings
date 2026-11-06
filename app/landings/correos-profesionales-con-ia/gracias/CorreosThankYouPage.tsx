@@ -35,31 +35,6 @@ function WhatsAppIcon() {
   );
 }
 
-function MailConfirmation() {
-  return (
-    <div className={styles.mailConfirmation} aria-hidden="true">
-      <div className={styles.mailBar}><i /><i /><i /></div>
-      <div className={styles.mailBody}>
-        <span className={styles.mailSubject} />
-        <div className={styles.envelope}><span /></div>
-        <span className={styles.mailLine} />
-        <span className={styles.mailLineShort} />
-      </div>
-      <span className={styles.confirmationSeal}><CheckIcon /></span>
-    </div>
-  );
-}
-
-function EventDetails({ campaign }: { campaign: LandingCampaign }) {
-  return (
-    <dl className={styles.eventDetails} aria-label="Datos de la clase">
-      <div><dt>Fecha</dt><dd>{campaign.event.displayDate}</dd></div>
-      <div><dt>Hora</dt><dd>{campaign.event.displayTime} · {campaign.event.displayTimeZone}</dd></div>
-      <div><dt>Modalidad</dt><dd>En línea · Gratuita</dd></div>
-    </dl>
-  );
-}
-
 export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign }) {
   const [state, setState] = useState<State>("validating");
   const registrationId = useRef<string | null>(null);
@@ -158,6 +133,10 @@ export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign })
             <p className={styles.stepLabel}>PARA RECIBIR TU ACCESO</p>
             <span className={styles.whatsappSeal}><WhatsAppIcon /></span>
             <h2>Entra al grupo para completar tu acceso</h2>
+            <dl className={styles.eventSummary} aria-label="Fecha y hora de la clase">
+              <div><dt>FECHA</dt><dd>{campaign.event.displayDate}</dd></div>
+              <div><dt>HORA</dt><dd>{campaign.event.displayTime} · {campaign.event.displayTimeZone}</dd></div>
+            </dl>
             <div className={styles.accessNotice}>
               <strong>Falta un paso para recibir la clase</strong>
               <span>El enlace, los recordatorios y los materiales se compartirán en el grupo oficial de WhatsApp.</span>
@@ -176,14 +155,6 @@ export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign })
               <li><span>2</span><div><strong>Confirma tu ingreso</strong><small>En WhatsApp, toca “Unirme al grupo”.</small></div></li>
             </ol>
           </aside>
-
-          <div className={styles.successCopy}>
-            <p className={styles.eyebrow}><span />DATOS GUARDADOS</p>
-            <h1>Tu lugar está <span>reservado.</span></h1>
-            <p className={styles.lead}><strong>{campaign.thanks.message}</strong> Ahora entra al grupo oficial para recibir el acceso, los recordatorios y los materiales de la clase.</p>
-            <EventDetails campaign={campaign} />
-            <MailConfirmation />
-          </div>
         </section>
 
         <p className={styles.footerNote}>CORREOS PROFESIONALES · CLARIDAD, TONO Y SIGUIENTE PASO</p>

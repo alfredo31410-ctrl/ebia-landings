@@ -49,50 +49,23 @@
 .progress i::after { position: absolute; inset: 0; background: linear-gradient(90deg, var(--cyan), #0b98ef); content: ""; }
 .progress strong { flex: 0 0 auto; color: #c6d7e9; }
 
-.confirmationCard { display: grid; max-width: 1040px; min-height: 650px; grid-template-columns: .94fr 1.06fr; margin-inline: auto; overflow: hidden; border: 1px solid rgba(121,226,255,.34); border-radius: 28px; background: rgba(8,39,87,.64); box-shadow: 0 38px 100px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(16px); }
+.confirmationCard { max-width: 680px; margin-inline: auto; overflow: hidden; border: 1px solid rgba(121,226,255,.34); border-radius: 28px; background: rgba(8,39,87,.64); box-shadow: 0 38px 100px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(16px); }
 
-.successCopy { position: relative; overflow: hidden; padding: 58px 54px 46px; }
-.successCopy::before { position: absolute; top: -180px; left: -160px; width: 410px; height: 410px; border-radius: 50%; background: rgba(53,215,232,.1); filter: blur(1px); content: ""; }
 .eyebrow { position: relative; display: flex; align-items: center; gap: 10px; margin: 0 0 18px; color: var(--cyan); font-size: 10px; font-weight: 950; letter-spacing: .16em; }
 .eyebrow > span { width: 28px; height: 3px; border-radius: 3px; background: var(--cyan); }
-.successCopy h1,
 .invalidCard h1,
 .nextStep h2 { font-family: Arial, Helvetica, sans-serif; }
-.successCopy h1 { position: relative; max-width: 590px; margin: 0; font-size: clamp(52px, 6vw, 78px); line-height: .91; letter-spacing: -.068em; }
-.successCopy h1 span { display: block; margin-top: 7px; color: var(--cyan); }
-.lead { position: relative; max-width: 590px; margin: 26px 0 0; color: #c5d4e6; font-size: 16px; line-height: 1.65; }
-.lead strong { color: white; }
 
-.eventDetails { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 30px 0 0; }
-.eventDetails div { min-width: 0; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.055); padding: 13px; }
-.eventDetails dt { color: #7fa0c3; font-size: 8px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
-.eventDetails dd { margin: 6px 0 0; color: #edf6ff; font-size: 11px; font-weight: 800; line-height: 1.35; }
-
-.mailConfirmation { position: relative; width: min(330px, 88%); margin: 34px auto -105px; border: 1px solid rgba(121,226,255,.55); border-radius: 20px; background: linear-gradient(145deg, rgba(16,121,225,.92), rgba(3,52,120,.98)); padding: 10px; box-shadow: 0 24px 55px rgba(0,0,0,.35); transform: rotate(-2deg); }
-.mailBar { display: flex; height: 28px; align-items: center; gap: 6px; padding-inline: 5px; }
-.mailBar i { width: 8px; height: 8px; border-radius: 50%; background: #e8fbff; }
-.mailBody { min-height: 160px; border-radius: 12px; background: linear-gradient(155deg, #eef9ff, #b3ddf7); padding: 17px; }
-.mailSubject,
-.mailLine,
-.mailLineShort { display: block; height: 7px; border-radius: 999px; background: #76afd9; }
-.mailSubject { width: 55%; }
-.mailLine { width: 74%; margin-top: 13px; }
-.mailLineShort { width: 48%; margin-top: 7px; }
-.envelope { position: relative; width: 112px; height: 70px; margin: 20px auto 0; overflow: hidden; border-radius: 7px; background: white; box-shadow: 0 10px 18px rgba(8,72,136,.18); }
-.envelope::before,
-.envelope::after { position: absolute; top: 16px; width: 80px; height: 80px; background: white; content: ""; transform: rotate(45deg); }
-.envelope::before { left: -40px; }
-.envelope::after { right: -40px; }
-.envelope span { position: absolute; z-index: 2; top: -54px; left: 20px; width: 73px; height: 73px; border-radius: 7px; background: linear-gradient(140deg, #27d9ee, #086edb); transform: rotate(45deg); }
-.confirmationSeal { position: absolute; right: -14px; bottom: 18px; display: grid; width: 50px; height: 50px; place-items: center; border: 2px solid #a7f7ff; border-radius: 50%; background: linear-gradient(145deg, #2bd9da, #0494ca); color: white; box-shadow: 0 10px 24px rgba(0,77,124,.38); }
-.confirmationSeal svg { width: 30px; height: 30px; stroke: currentColor; stroke-width: 3; }
-
-.nextStep { position: relative; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid rgba(255,255,255,.12); background: linear-gradient(160deg, rgba(53,215,232,.13), rgba(255,255,255,.035)); padding: 46px 42px; }
+.nextStep { position: relative; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(160deg, rgba(53,215,232,.13), rgba(255,255,255,.035)); padding: 50px 48px; }
 .nextStep::before { position: absolute; top: 0; right: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--cyan), #0a8df0); content: ""; }
 .stepLabel { margin: 0; color: var(--cyan); font-size: 9px; font-weight: 950; letter-spacing: .18em; }
 .whatsappSeal { display: grid; width: 58px; height: 58px; place-items: center; margin-top: 20px; border: 1px solid rgba(53,215,232,.35); border-radius: 18px; background: rgba(53,215,232,.12); color: var(--cyan); }
 .whatsappSeal svg { width: 32px; height: 32px; }
 .nextStep h2 { margin: 22px 0 0; font-size: clamp(33px, 4.2vw, 48px); line-height: .98; letter-spacing: -.055em; }
+.eventSummary { display: grid; grid-template-columns: 1.2fr .8fr; gap: 10px; margin: 22px 0 0; }
+.eventSummary div { min-width: 0; border: 1px solid rgba(255,255,255,.14); border-radius: 13px; background: rgba(255,255,255,.055); padding: 13px; }
+.eventSummary dt { color: #8da9c7; font-size: 8px; font-weight: 950; letter-spacing: .14em; }
+.eventSummary dd { margin: 6px 0 0; color: white; font-size: 11px; font-weight: 850; line-height: 1.4; }
 .accessNotice { display: grid; gap: 7px; margin-top: 22px; border: 1px solid rgba(53,215,232,.34); border-radius: 15px; background: rgba(3,20,47,.48); padding: 15px; }
 .accessNotice strong { color: white; font-size: 13px; line-height: 1.35; }
 .accessNotice span { color: #b8cade; font-size: 11px; line-height: 1.55; }
@@ -127,13 +100,6 @@
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-@media (max-width: 860px) {
-  .confirmationCard { max-width: 680px; grid-template-columns: 1fr; }
-  .successCopy { padding-bottom: 120px; }
-  .nextStep { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.12); }
-  .mailConfirmation { margin-bottom: -180px; }
-}
-
 @media (max-width: 620px) {
   .shell { width: min(100% - 28px, 1180px); }
   .header .shell { min-height: 70px; }
@@ -144,15 +110,10 @@
   .progress { flex-wrap: wrap; gap: 8px; }
   .progress i { min-width: 100%; order: 3; }
   .progress strong { margin-left: auto; }
-  .confirmationCard { min-height: 0; border-radius: 21px; }
-  .successCopy { padding: 40px 22px 110px; }
-  .successCopy h1 { font-size: clamp(49px, 14.5vw, 65px); }
-  .lead { font-size: 14px; }
-  .eventDetails { grid-template-columns: 1fr; }
-  .eventDetails div { padding: 11px 13px; }
-  .mailConfirmation { width: 84%; margin-top: 28px; margin-bottom: -170px; }
+  .confirmationCard { border-radius: 21px; }
   .nextStep { padding: 42px 22px; }
   .nextStep h2 { font-size: clamp(37px, 11vw, 48px); }
+  .eventSummary { grid-template-columns: 1fr; }
   .whatsappButton { padding-inline: 14px; font-size: 9px; }
   .whatsappButton svg:first-child { width: 21px; height: 21px; }
   .invalidContainer { min-height: calc(100vh - 70px); }
