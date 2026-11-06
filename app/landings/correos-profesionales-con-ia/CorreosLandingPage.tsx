@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Brand } from "@/app/components/Brand";
 import { ActiveCampaignForm } from "@/app/components/forms/ActiveCampaignForm";
 import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
@@ -78,6 +78,9 @@ export function CorreosLandingPage({
   campaign: LandingCampaign;
   registrationError?: boolean;
 }) {
+  const formCardRef = useRef<HTMLDivElement>(null);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
   useEffect(
     () =>
       trackMetaEventWhenReady("ViewContent", campaign.slug, {
@@ -86,6 +89,17 @@ export function CorreosLandingPage({
       }),
     [campaign.integrations.metaContentName, campaign.slug],
   );
+
+  useEffect(() => {
+    const formCard = formCardRef.current;
+    if (!formCard || !("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsFormVisible(entry.isIntersecting),
+      { threshold: 0.05 },
+    );
+    observer.observe(formCard);
+    return () => observer.disconnect();
+  }, []);
 
   const goToForm = useCallback(() => {
     trackMetaEventWhenReady(
@@ -97,7 +111,10 @@ export function CorreosLandingPage({
       },
       "session",
     );
-    document.getElementById("registro-correos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("formulario-correos")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }, [campaign.integrations.metaContentName, campaign.slug]);
 
   return (
@@ -118,7 +135,7 @@ export function CorreosLandingPage({
             <a href="#metodo">El método</a>
             <a href="#instructora">Instructora</a>
           </nav>
-          <button type="button" onClick={goToForm}>RESERVAR LUGAR</button>
+          <button type="button" onClick={goToForm} aria-controls="formulario-correos">RESERVAR LUGAR</button>
         </div>
       </header>
 
@@ -134,7 +151,7 @@ export function CorreosLandingPage({
               <li><Icon name="check" />Adapta el tono y deja claro el siguiente paso.</li>
             </ul>
             <div className={styles.heroActions}>
-              <button className={styles.primaryCta} type="button" onClick={goToForm}>RESERVAR MI LUGAR GRATIS <Icon name="arrow" /></button>
+              <button className={styles.primaryCta} type="button" onClick={goToForm} aria-controls="formulario-correos">RESERVAR MI LUGAR GRATIS <Icon name="arrow" /></button>
               <p>En línea · Sin costo · Desde cero</p>
             </div>
           </div>
@@ -187,14 +204,14 @@ export function CorreosLandingPage({
       <section className={styles.instructorSection} id="instructora">
         <div className={`${styles.shell} ${styles.instructorGrid}`}>
           <div className={styles.instructorPhoto}><div /><Image src={campaign.image.src} alt={campaign.image.alt} width={campaign.image.width} height={campaign.image.height} sizes="(max-width: 760px) 92vw, 42vw" /></div>
-          <div className={styles.instructorCopy}><p>TU GUÍA EN ESTA CLASE</p><h2>Aprende con ejemplos claros y aplicables.</h2><p>Miranda te acompañará paso a paso para convertir situaciones cotidianas de trabajo en instrucciones que la IA pueda entender y transformar en mejores borradores.</p><div><strong>{campaign.instructor?.name}</strong><span>{campaign.instructor?.role}</span></div><button className={styles.primaryCta} type="button" onClick={goToForm}>QUIERO REGISTRARME <Icon name="arrow" /></button></div>
+          <div className={styles.instructorCopy}><p>TU GUÍA EN ESTA CLASE</p><h2>Aprende con ejemplos claros y aplicables.</h2><p>Miranda te acompañará paso a paso para convertir situaciones cotidianas de trabajo en instrucciones que la IA pueda entender y transformar en mejores borradores.</p><div><strong>{campaign.instructor?.name}</strong><span>{campaign.instructor?.role}</span></div><button className={styles.primaryCta} type="button" onClick={goToForm} aria-controls="formulario-correos">QUIERO REGISTRARME <Icon name="arrow" /></button></div>
         </div>
       </section>
 
       <section className={styles.registrationSection} id="registro-correos">
         <div className={`${styles.shell} ${styles.registrationGrid}`}>
           <div className={styles.registrationCopy}><p>MARTES 10 DE NOVIEMBRE · 1:00 P. M. CDMX</p><h2>Escribe tu próximo correo con más claridad.</h2><ul><li><Icon name="check" />Clase gratuita y en línea</li><li><Icon name="check" />No necesitas experiencia previa</li><li><Icon name="check" />Ejemplos aplicados al trabajo</li></ul></div>
-          <div className={styles.formCard}>
+          <div className={styles.formCard} id="formulario-correos" ref={formCardRef}>
             <span>PASO 1 DE 2</span><h2>Reserva tu lugar gratis</h2><p>Completa tus datos. Después entrarás al grupo oficial de WhatsApp para recibir el acceso.</p>
             {campaign.integrations.activeCampaignFormId ? (
               <ActiveCampaignForm formId={campaign.integrations.activeCampaignFormId} campaign={campaign.slug} metaContentName={campaign.integrations.metaContentName} confirmationPath={`/landings/${campaign.slug}/registro-confirmado`} showIntro={false} />
@@ -213,7 +230,9 @@ export function CorreosLandingPage({
       </section>
 
       <footer className={styles.footer}><div className={styles.shell}><Brand inverse /><p>Inteligencia artificial clara, útil y aplicable.</p><small>© 2026 EBIA. Todos los derechos reservados.</small></div></footer>
-      <button className={styles.mobileCta} type="button" onClick={goToForm}>RESERVAR MI LUGAR GRATIS <Icon name="arrow" /></button>
+      {!isFormVisible && (
+        <button className={styles.mobileCta} type="button" onClick={goToForm} aria-controls="formulario-correos">RESERVAR MI LUGAR GRATIS <Icon name="arrow" /></button>
+      )}
     </main>
   );
 }
