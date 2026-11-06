@@ -150,27 +150,18 @@ export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign })
 
       <div className={`${styles.shell} ${styles.content}`}>
         <div className={styles.progress} aria-label="Paso 2 de 2">
-          <span><CheckIcon /> DATOS GUARDADOS</span><i /><strong>2 DE 2 · ENTRAR AL GRUPO</strong>
+          <span><CheckIcon /> DATOS GUARDADOS</span><i /><strong>ÚLTIMO PASO · ENTRAR AL GRUPO</strong>
         </div>
 
         <section className={styles.confirmationCard} aria-live="polite">
-          <div className={styles.successCopy}>
-            <p className={styles.eyebrow}><span />REGISTRO CONFIRMADO</p>
-            <h1>Tu lugar está <span>reservado.</span></h1>
-            <p className={styles.lead}><strong>{campaign.thanks.message}</strong> Para recibir el enlace, los recordatorios y los materiales, completa ahora el último paso.</p>
-            <EventDetails campaign={campaign} />
-            <MailConfirmation />
-          </div>
-
-          <aside className={styles.nextStep} aria-label="Último paso del registro">
-            <p className={styles.stepLabel}>ÚLTIMO PASO</p>
+          <aside className={styles.nextStep} aria-label="Paso para recibir el acceso a la clase">
+            <p className={styles.stepLabel}>PARA RECIBIR TU ACCESO</p>
             <span className={styles.whatsappSeal}><WhatsAppIcon /></span>
-            <h2>Entra al grupo oficial de WhatsApp</h2>
-            <p>Ahí compartiremos únicamente la información necesaria para que llegues listo a la clase.</p>
-            <ol>
-              <li><span>1</span><div><strong>Abre el grupo</strong><small>Usa el botón de esta página.</small></div></li>
-              <li><span>2</span><div><strong>Confirma tu ingreso</strong><small>En WhatsApp, toca “Unirme al grupo”.</small></div></li>
-            </ol>
+            <h2>Entra al grupo para completar tu acceso</h2>
+            <div className={styles.accessNotice}>
+              <strong>Falta un paso para recibir la clase</strong>
+              <span>El enlace, los recordatorios y los materiales se compartirán en el grupo oficial de WhatsApp.</span>
+            </div>
 
             {state === "ready" ? (
               <a className={styles.whatsappButton} href={`/landings/${campaign.slug}/api/whatsapp/redirect`} onClick={trackWhatsAppClick}>
@@ -179,8 +170,20 @@ export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign })
             ) : (
               <div className={styles.validating} role="status"><span aria-hidden="true" />CONFIRMANDO TU REGISTRO…</div>
             )}
-            <p className={styles.privacyNote}>Tu enlace de acceso no se mostrará públicamente; se compartirá dentro del grupo oficial.</p>
+            <p className={styles.privacyNote}>No cierres esta página sin entrar al grupo. Ahí recibirás la información necesaria para asistir.</p>
+            <ol>
+              <li><span>1</span><div><strong>Abre el grupo</strong><small>Usa el botón de esta página.</small></div></li>
+              <li><span>2</span><div><strong>Confirma tu ingreso</strong><small>En WhatsApp, toca “Unirme al grupo”.</small></div></li>
+            </ol>
           </aside>
+
+          <div className={styles.successCopy}>
+            <p className={styles.eyebrow}><span />DATOS GUARDADOS</p>
+            <h1>Tu lugar está <span>reservado.</span></h1>
+            <p className={styles.lead}><strong>{campaign.thanks.message}</strong> Ahora entra al grupo oficial para recibir el acceso, los recordatorios y los materiales de la clase.</p>
+            <EventDetails campaign={campaign} />
+            <MailConfirmation />
+          </div>
         </section>
 
         <p className={styles.footerNote}>CORREOS PROFESIONALES · CLARIDAD, TONO Y SIGUIENTE PASO</p>

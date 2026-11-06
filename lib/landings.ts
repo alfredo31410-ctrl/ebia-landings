@@ -344,7 +344,7 @@ export const campaigns = {
     thanks: {
       title: "Solo falta entrar al grupo oficial de WhatsApp",
       message: "Tus datos fueron guardados correctamente.",
-      actionLabel: "ENTRAR AL GRUPO DE WHATSAPP",
+      actionLabel: "COMPLETAR MI ACCESO EN WHATSAPP",
     },
     instructor: {
       name: "Miranda Medina",

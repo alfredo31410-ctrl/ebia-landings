@@ -507,6 +507,10 @@ test("Correos profesionales con IA expone la fecha y prepara su registro", async
   const { getCampaign, getEventStatus } = await import("./landings.ts");
   const campaign = getCampaign("correos-profesionales-con-ia");
   assert.equal(campaign.integrations.activeCampaignFormId, "379");
+  assert.equal(
+    campaign.thanks.actionLabel,
+    "COMPLETAR MI ACCESO EN WHATSAPP",
+  );
   assert.equal(campaign.event.startsAt, "2026-11-10T13:00:00-06:00");
   assert.equal(
     getEventStatus(campaign, new Date("2026-11-06T12:00:00-06:00")),
