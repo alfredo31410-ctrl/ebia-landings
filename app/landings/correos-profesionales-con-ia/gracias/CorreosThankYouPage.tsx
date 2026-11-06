@@ -133,14 +133,6 @@ export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign })
             <p className={styles.stepLabel}>PARA RECIBIR TU ACCESO</p>
             <span className={styles.whatsappSeal}><WhatsAppIcon /></span>
             <h2>Entra al grupo para completar tu acceso</h2>
-            <dl className={styles.eventSummary} aria-label="Fecha y hora de la clase">
-              <div><dt>FECHA</dt><dd>{campaign.event.displayDate}</dd></div>
-              <div><dt>HORA</dt><dd>{campaign.event.displayTime} · {campaign.event.displayTimeZone}</dd></div>
-            </dl>
-            <div className={styles.accessNotice}>
-              <strong>Falta un paso para recibir la clase</strong>
-              <span>El enlace, los recordatorios y los materiales se compartirán en el grupo oficial de WhatsApp.</span>
-            </div>
 
             {state === "ready" ? (
               <a className={styles.whatsappButton} href={`/landings/${campaign.slug}/api/whatsapp/redirect`} onClick={trackWhatsAppClick}>
@@ -149,6 +141,15 @@ export function CorreosThankYouPage({ campaign }: { campaign: LandingCampaign })
             ) : (
               <div className={styles.validating} role="status"><span aria-hidden="true" />CONFIRMANDO TU REGISTRO…</div>
             )}
+
+            <dl className={styles.eventSummary} aria-label="Fecha y hora de la clase">
+              <div><dt>FECHA</dt><dd>{campaign.event.displayDate}</dd></div>
+              <div><dt>HORA</dt><dd>{campaign.event.displayTime} · {campaign.event.displayTimeZone}</dd></div>
+            </dl>
+            <div className={styles.accessNotice}>
+              <strong>Falta un paso para recibir la clase</strong>
+              <span>El enlace, los recordatorios y los materiales se compartirán en el grupo oficial de WhatsApp.</span>
+            </div>
             <p className={styles.privacyNote}>No cierres esta página sin entrar al grupo. Ahí recibirás la información necesaria para asistir.</p>
             <ol>
               <li><span>1</span><div><strong>Abre el grupo</strong><small>Usa el botón de esta página.</small></div></li>
