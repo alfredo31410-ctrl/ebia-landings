@@ -15,8 +15,10 @@ const ALLOWED_ORIGINS = new Set([
   "https://ebiacapacitacion.com",
   "http://localhost:3000",
   "http://localhost:3001",
+  "http://localhost:3002",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
+  "http://127.0.0.1:3002",
 ]);
 
 const getAllowedOrigin = (request: Request) => {
@@ -63,7 +65,8 @@ export async function handleRegistrationNonce(request: Request) {
     const body = JSON.parse(rawBody) as { landing?: string };
     if (
       body.landing !== "ia-desde-cero" &&
-      body.landing !== "ia-maestros"
+      body.landing !== "ia-maestros" &&
+      body.landing !== "correos-profesionales-con-ia"
     )
       return NextResponse.json({ ok: false }, { status: 400 });
     const nonce = createRegistrationNonce(body.landing);
@@ -113,7 +116,7 @@ export async function handleCampaignWhatsAppRedirect(
   const token = verifyRegistrationToken(
     getCookie(request, cookieName),
   );
-  const target = getWhatsAppGroupUrl(campaign.slug);
+  const target = await getWhatsAppGroupUrl(campaign.slug);
   if (!token || token.landingSlug !== campaign.slug || !target)
     return NextResponse.json({ ok: false }, { status: 403 });
   const response = NextResponse.redirect(target, {

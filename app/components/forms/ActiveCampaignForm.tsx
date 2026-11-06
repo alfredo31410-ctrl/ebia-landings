@@ -60,7 +60,11 @@ export function ActiveCampaignForm({
   };
 
   useEffect(() => {
-    if (campaign === "ia-maestros") persistAttributionCookie();
+    if (
+      campaign === "ia-maestros" ||
+      campaign === "correos-profesionales-con-ia"
+    )
+      persistAttributionCookie();
   }, [campaign]);
 
   useEffect(() => {
@@ -89,7 +93,11 @@ export function ActiveCampaignForm({
       }
       // El nonce ya está firmado por el servidor; ActiveCampaign controla el envío
       // y su redirección posterior hacia registro-confirmado.
-      if (campaign === "ia-maestros") persistAttributionCookie();
+      if (
+        campaign === "ia-maestros" ||
+        campaign === "correos-profesionales-con-ia"
+      )
+        persistAttributionCookie();
       setError(null);
       setIsSubmitting(true);
       resetTrackedMetaEvent("CompleteRegistration", campaign, "session");

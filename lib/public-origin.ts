@@ -2,8 +2,10 @@ const PUBLIC_ORIGIN = "https://ebiacapacitacion.com";
 const LOCAL_ORIGINS = new Set([
   "http://localhost:3000",
   "http://localhost:3001",
+  "http://localhost:3002",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
+  "http://127.0.0.1:3002",
 ]);
 
 /** Devuelve solo un origen confiable para redirecciones internas del embudo. */

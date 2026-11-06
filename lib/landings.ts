@@ -9,7 +9,11 @@ export type EventStatus =
   | "ended";
 
 export type LandingCampaign = {
-  slug: "ia-desde-cero" | "ia-maestros" | "tareas-con-ia";
+  slug:
+    | "ia-desde-cero"
+    | "ia-maestros"
+    | "tareas-con-ia"
+    | "correos-profesionales-con-ia";
   variant: CampaignVariant;
   seo: { title: string; description: string };
   topbar: string;
@@ -41,7 +45,8 @@ export type LandingCampaign = {
     endsAt: string | null;
     registrationClosesAt: string | null;
     timeZone: string;
-    whatsappEnvKey: string;
+    /** Respaldo heredado; el destino principal vive en el config.ts de la landing. */
+    whatsappEnvKey?: string;
   };
   thanks: { title: string; message: string; actionLabel: string };
   instructor?: {
@@ -188,7 +193,6 @@ export const campaigns = {
       endsAt: null,
       registrationClosesAt: null,
       timeZone: "America/Mexico_City",
-      whatsappEnvKey: "WHATSAPP_GROUP_URL_IA_MAESTROS",
     },
     thanks: {
       title: "Solo falta entrar al grupo oficial de WhatsApp",
@@ -261,7 +265,83 @@ export const campaigns = {
       endsAt: null,
       registrationClosesAt: null,
       timeZone: "America/Mexico_City",
-      whatsappEnvKey: "WHATSAPP_GROUP_URL_TAREAS_CON_IA",
+    },
+    thanks: {
+      title: "Solo falta entrar al grupo oficial de WhatsApp",
+      message: "Tus datos fueron guardados correctamente.",
+      actionLabel: "ENTRAR AL GRUPO DE WHATSAPP",
+    },
+    instructor: {
+      name: "Miranda Medina",
+      role: "Instructora EBIA",
+      bio: null,
+    },
+  },
+  "correos-profesionales-con-ia": {
+    slug: "correos-profesionales-con-ia",
+    variant: "class",
+    seo: {
+      title: "Correos profesionales con IA · Clase gratuita",
+      description:
+        "Aprende a escribir correos claros y profesionales con ayuda de la Inteligencia Artificial.",
+    },
+    topbar: "Clase gratuita en línea",
+    eyebrow: "COMUNICACIÓN CLARA + IA",
+    headline: "Correos profesionales",
+    highlightedHeadline: "con IA",
+    intro:
+      "Escribe con claridad, transmite profesionalismo y deja claro el siguiente paso en cada mensaje de trabajo.",
+    primaryCta: "RESERVAR MI LUGAR GRATIS",
+    secondaryCta: "Ver lo que aprenderás",
+    microcopy: "10 de noviembre · 1:00 p. m. CDMX · Sin costo",
+    facts: [
+      { label: "Fecha", value: "MARTES 10 DE NOVIEMBRE" },
+      { label: "Hora", value: "1:00 P. M." },
+      { label: "Zona", value: "HORA CDMX" },
+      { label: "Modalidad", value: "EN LÍNEA" },
+    ],
+    image: {
+      src: "/landings/tareas-con-ia/instructora.webp",
+      alt: "Miranda Medina, instructora de EBIA",
+      width: 1024,
+      height: 1535,
+    },
+    visualNotes: ["Ejemplos prácticos", "Aplicado al trabajo"],
+    section: {
+      eyebrow: "LO QUE APRENDERÁS",
+      title: "Un método sencillo para escribir con más claridad",
+      outcomes: [
+        {
+          title: "Da instrucciones claras",
+          description:
+            "Entrega a la IA el contexto necesario para obtener un correo realmente útil.",
+        },
+        {
+          title: "Ordena tus ideas",
+          description:
+            "Convierte notas sueltas en un mensaje profesional, breve y fácil de entender.",
+        },
+        {
+          title: "Ajusta tono y acción",
+          description:
+            "Adapta el tono a cada persona y deja claro qué debe suceder después.",
+        },
+      ],
+    },
+    integrations: {
+      activeCampaignFormId:
+        process.env.NEXT_PUBLIC_ACTIVE_CAMPAIGN_FORM_ID_CORREOS_PROFESIONALES ||
+        "",
+      metaContentName: "Correos profesionales con IA",
+    },
+    event: {
+      startsAt: "2026-11-10T13:00:00-06:00",
+      displayDate: "martes 10 de noviembre de 2026",
+      displayTime: "1:00 p. m.",
+      displayTimeZone: "hora CDMX",
+      endsAt: null,
+      registrationClosesAt: null,
+      timeZone: "America/Mexico_City",
     },
     thanks: {
       title: "Solo falta entrar al grupo oficial de WhatsApp",

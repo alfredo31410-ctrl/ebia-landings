@@ -1,19 +1,18 @@
 import { getCampaign, type CampaignSlug } from "./landings.ts";
+import { getLandingWhatsAppConfig } from "./whatsapp-config.ts";
+import { normalizeWhatsAppGroupUrl } from "./whatsapp-url.ts";
 
-// Excepción autorizada para que el equipo pueda administrar este destino desde
-// GitHub. La variable de entorno conserva prioridad cuando esté configurada.
-const DEFAULT_WHATSAPP_GROUPS: Partial<Record<CampaignSlug, string>> = {
-  "ia-maestros": "https://chat.whatsapp.com/DtMMWx78JFUKgPAVxQagxk",
-  "tareas-con-ia": "https://chat.whatsapp.com/He8WgsBxHCq5bp5fCsYccL",
-};
-
-export function getWhatsAppGroupUrl(slug: CampaignSlug) {
+export function getLegacyWhatsAppGroupUrl(slug: CampaignSlug) {
   const campaign = getCampaign(slug);
-  const value =
-    process.env[campaign.event.whatsappEnvKey] ?? DEFAULT_WHATSAPP_GROUPS[slug];
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" && url.hostname === "chat.whatsapp.com" && url.pathname.length > 1 && !url.search && !url.hash ? url.toString() : null;
-  } catch { return null; }
+  const value = campaign.event.whatsappEnvKey
+    ? process.env[campaign.event.whatsappEnvKey]
+    : undefined;
+  return normalizeWhatsAppGroupUrl(value);
+}
+
+export async function getWhatsAppGroupUrl(slug: CampaignSlug) {
+  const configured = normalizeWhatsAppGroupUrl(
+    getLandingWhatsAppConfig(slug).whatsappGroupUrl,
+  );
+  return configured ?? getLegacyWhatsAppGroupUrl(slug);
 }

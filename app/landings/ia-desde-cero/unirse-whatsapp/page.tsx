@@ -19,11 +19,14 @@ export default async function Page() {
     (await cookies()).get(REGISTRATION_COOKIE)?.value,
   );
   const registration = token?.landingSlug === campaign.slug ? token : null;
+  const whatsappConfigured = Boolean(
+    await getWhatsAppGroupUrl(campaign.slug),
+  );
   return (
     <WhatsAppRedirectPage
       campaign={campaign}
       registration={registration}
-      whatsappConfigured={Boolean(getWhatsAppGroupUrl(campaign.slug))}
+      whatsappConfigured={whatsappConfigured}
     />
   );
 }

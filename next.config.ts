@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
+  agentRules: false,
   reactStrictMode: true,
   poweredByHeader: false,
   // Prevent this app's JS and CSS from colliding with the main site's /_next assets.

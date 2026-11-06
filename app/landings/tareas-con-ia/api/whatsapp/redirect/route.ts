@@ -14,11 +14,11 @@ function cookieValue(request: Request, name: string) {
     ?.slice(name.length + 1);
 }
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   const confirmed = isTareasRegistrationId(
     cookieValue(request, TAREAS_WHATSAPP_COOKIE),
   );
-  const target = getWhatsAppGroupUrl("tareas-con-ia");
+  const target = await getWhatsAppGroupUrl("tareas-con-ia");
 
   if (!confirmed || !target) {
     return NextResponse.redirect(

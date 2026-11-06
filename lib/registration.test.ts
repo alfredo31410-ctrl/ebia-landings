@@ -34,25 +34,31 @@ test("firma, expiración y sanitización de nonce/token", async () => {
 test("el host de WhatsApp debe ser HTTPS y oficial", async () => {
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code";
   const { getWhatsAppGroupUrl } = await import("./whatsapp.ts");
-  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), "https://chat.whatsapp.com/invite-code");
+  assert.equal(await getWhatsAppGroupUrl("ia-desde-cero"), "https://chat.whatsapp.com/invite-code");
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://example.com/open-redirect";
-  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  assert.equal(await getWhatsAppGroupUrl("ia-desde-cero"), null);
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "http://chat.whatsapp.com/invite-code";
-  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  assert.equal(await getWhatsAppGroupUrl("ia-desde-cero"), null);
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code?x=1";
-  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  assert.equal(await getWhatsAppGroupUrl("ia-desde-cero"), null);
   process.env.WHATSAPP_GROUP_URL_IA_DESDE_CERO = "https://chat.whatsapp.com/invite-code#fragment";
-  assert.equal(getWhatsAppGroupUrl("ia-desde-cero"), null);
+  assert.equal(await getWhatsAppGroupUrl("ia-desde-cero"), null);
   delete process.env.WHATSAPP_GROUP_URL_IA_MAESTROS;
-  assert.equal(
-    new URL(getWhatsAppGroupUrl("ia-maestros")!).hostname,
-    "chat.whatsapp.com",
-  );
+  for (const slug of [
+    "ia-maestros",
+    "tareas-con-ia",
+    "correos-profesionales-con-ia",
+  ] as const) {
+    assert.equal(
+      new URL((await getWhatsAppGroupUrl(slug))!).hostname,
+      "chat.whatsapp.com",
+    );
+  }
   process.env.WHATSAPP_GROUP_URL_IA_MAESTROS =
     "https://chat.whatsapp.com/override-code";
-  assert.equal(
-    getWhatsAppGroupUrl("ia-maestros"),
-    "https://chat.whatsapp.com/override-code",
+  assert.notEqual(
+    await getWhatsAppGroupUrl("ia-maestros"),
+    process.env.WHATSAPP_GROUP_URL_IA_MAESTROS,
   );
   delete process.env.WHATSAPP_GROUP_URL_IA_MAESTROS;
 });
@@ -73,7 +79,7 @@ test("registro-confirmado crea cookie y redirige a gracias con nonce valido", as
   const originalNodeEnv = process.env.NODE_ENV;
   setNodeEnv("production");
   const { createRegistrationNonce } = await import("./registration.ts");
-  const { handleConfirmedRegistration } = await import("../app/landings/ia-desde-cero/registro-confirmado/route.ts");
+  const { handleConfirmedRegistration } = await import("./confirmed-registration-handlers.ts");
   const nonce = createRegistrationNonce("ia-desde-cero");
   const response = await handleConfirmedRegistration(
     new Request("https://example.test/landings/ia-desde-cero/registro-confirmado?utm_source=test", { headers: { cookie: `ebia_registration_nonce=${nonce.value}` } }),
@@ -166,7 +172,7 @@ test("IA para Maestros prepara nonce y confirma el regreso del formulario 327", 
   const nonceValue = setCookie.match(/ebia_registration_nonce=([^;]+)/)?.[1];
   assert.ok(nonceValue);
 
-  const { handleTeacherConfirmedRegistration } = await import("../app/landings/ia-maestros/registro-confirmado/route.ts");
+  const { handleTeacherConfirmedRegistration } = await import("./confirmed-registration-handlers.ts");
   const attribution = encodeURIComponent(JSON.stringify({ utm_source: "meta", utm_campaign: "docentes" }));
   const response = await handleTeacherConfirmedRegistration(
     new Request("https://example.test/landings/ia-maestros/registro-confirmado", { headers: { cookie: `ebia_registration_nonce=${nonceValue}; ebia_attribution_ia_maestros=${attribution}` } }),
@@ -427,7 +433,7 @@ test("el pixel puede desactivar la configuración automática antes de inicializ
 test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist", async () => {
   process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
   const { POST } = await import("../app/landings/ia-desde-cero/api/registrations/nonce/route.ts");
-  for (const origin of ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"]) {
+  for (const origin of ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://127.0.0.1:3000", "http://127.0.0.1:3001", "http://127.0.0.1:3002"]) {
     const response = await POST(new Request(`${origin}/landings/ia-desde-cero/api/registrations/nonce`, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify({ landing: "ia-desde-cero" }) }));
     assert.equal(response.status, 200, origin);
     assert.equal(response.headers.get("access-control-allow-origin"), origin);
@@ -437,6 +443,39 @@ test("el nonce acepta localhost y rechaza orígenes no incluidos en la allowlist
   assert.equal(rejected.status, 403);
   assert.equal(rejected.headers.get("access-control-allow-origin"), null);
   assert.equal(rejected.headers.get("vary"), "Origin");
+});
+
+test("Correos profesionales con IA expone la fecha y prepara su registro", async () => {
+  const originalSecret = process.env.REGISTRATION_TOKEN_SECRET;
+  process.env.REGISTRATION_TOKEN_SECRET = "x".repeat(40);
+  const { getCampaign, getEventStatus } = await import("./landings.ts");
+  const campaign = getCampaign("correos-profesionales-con-ia");
+  assert.equal(campaign.event.startsAt, "2026-11-10T13:00:00-06:00");
+  assert.equal(
+    getEventStatus(campaign, new Date("2026-11-06T12:00:00-06:00")),
+    "registration_open",
+  );
+
+  const { POST } = await import(
+    "../app/landings/correos-profesionales-con-ia/api/registrations/nonce/route.ts"
+  );
+  const response = await POST(
+    new Request(
+      "https://ebiacapacitacion.com/landings/correos-profesionales-con-ia/api/registrations/nonce",
+      {
+        method: "POST",
+        headers: {
+          origin: "https://ebiacapacitacion.com",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ landing: campaign.slug }),
+      },
+    ),
+  );
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("set-cookie") || "", /ebia_registration_nonce=/);
+  if (originalSecret === undefined) delete process.env.REGISTRATION_TOKEN_SECRET;
+  else process.env.REGISTRATION_TOKEN_SECRET = originalSecret;
 });
 
 test("la ruta prefijada de WhatsApp solo redirige con token válido y destino server-side", async () => {
