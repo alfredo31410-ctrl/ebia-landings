@@ -11,7 +11,10 @@ export function ThankYouPage({ campaign, registration }: { campaign: LandingCamp
     if (!registration && !requiresWhatsAppCompletion) return;
     // El id del registro forma parte de la clave persistente: recargar o abrir
     // otra pestaña no vuelve a enviar la conversión para el mismo registro.
-    const scope = registration ? `${campaign.slug}:${registration.registrationId}` : campaign.slug;
+    let scope = registration ? `${campaign.slug}:${registration.registrationId}` : campaign.slug;
+    if (requiresWhatsAppCompletion) {
+      try { scope = window.sessionStorage.getItem(`ebia:lead-scope:${campaign.slug}`) || scope; } catch {}
+    }
     return trackMetaEventWhenReady(campaign.conversionEvent ?? "CompleteRegistration", scope, { content_name: campaign.integrations.metaContentName, content_category: "Registro ActiveCampaign", status: "completed", value: 0, currency: "MXN" });
   }, [campaign.conversionEvent, campaign.integrations.metaContentName, campaign.slug, registration, requiresWhatsAppCompletion]);
 

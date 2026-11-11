@@ -6,6 +6,7 @@ import { persistAttributionCookie } from "@/lib/attribution";
 import { getActiveCampaignClassName, getActiveCampaignEmbedUrl } from "@/lib/integrations/active-campaign";
 import {
   resetTrackedMetaEvent,
+  trackMetaEvent,
   trackMetaEventWhenReady,
 } from "@/lib/integrations/meta-pixel";
 import { requestRegistrationNonce, type RegistrationNonceResponse } from "@/lib/registration-client";
@@ -82,6 +83,18 @@ export function ActiveCampaignForm({
       previousCallback?.(id);
       const submittedForm = document.getElementById(`_form_${id}_`);
       if (!submittedForm || !root.current?.contains(submittedForm)) return;
+      if (campaign === "excel-con-inteligencia-artificial") {
+        const scope = window.sessionStorage.getItem(`ebia:lead-scope:${campaign}`) || campaign;
+        // ActiveCampaign ya confirmó el envío: aquí es donde corresponde Lead.
+        trackMetaEvent("Lead", scope, {
+          content_name: metaContentName,
+          content_category: "Registro ActiveCampaign",
+          status: "completed",
+        });
+        // Deja un instante para que el píxel despache el evento antes del redirect.
+        window.setTimeout(() => window.location.assign(confirmationPath), 350);
+        return;
+      }
       window.location.assign(confirmationPath);
     };
     window._form_callback = redirectAfterSuccess;
@@ -89,7 +102,7 @@ export function ActiveCampaignForm({
       if (window._form_callback === redirectAfterSuccess)
         window._form_callback = previousCallback;
     };
-  }, [confirmationPath]);
+  }, [campaign, confirmationPath, metaContentName]);
 
   useEffect(() => {
     if (!requiresNonce) {
@@ -142,7 +155,12 @@ export function ActiveCampaignForm({
       }
       setError(null);
       setIsSubmitting(true);
-      resetTrackedMetaEvent(campaign === "excel-con-inteligencia-artificial" ? "Lead" : "CompleteRegistration", campaign, "session");
+      if (campaign === "excel-con-inteligencia-artificial") {
+        const leadScope = `${campaign}:${crypto.randomUUID()}`;
+        try { window.sessionStorage.setItem(`ebia:lead-scope:${campaign}`, leadScope); } catch {}
+      } else {
+        resetTrackedMetaEvent("CompleteRegistration", campaign, "session");
+      }
       applyState();
     };
     const observer = new MutationObserver(applyState);
