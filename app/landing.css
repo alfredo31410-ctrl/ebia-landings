@@ -83,7 +83,7 @@
 .registration-facts svg { width:25px; height:25px; margin:auto; fill:none; stroke:currentColor; stroke-width:1.8; }
 .registration-facts strong { font-size:12px; }
 .social-proof span { color:#ffd84c; letter-spacing:2px; }
-.form-card { min-height:430px; border-radius:16px; background:#fff; padding:25px; color:#161b43; box-shadow:0 24px 65px rgba(11,5,59,.3); }
+.form-card { min-height:430px; scroll-margin-top:18px; border-radius:16px; background:#fff; padding:25px; color:#161b43; box-shadow:0 24px 65px rgba(11,5,59,.3); }
 .active-campaign-form { min-height:360px; }
 .form-placeholder { display:grid; min-height:380px; place-items:center; align-content:center; border:2px dashed #d6d9ea; border-radius:12px; background:#fafbff; color:#6b7185; text-align:center; }
 .form-placeholder strong { color:#2c3061; font-size:20px; }
