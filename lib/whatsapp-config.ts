@@ -2,6 +2,7 @@ import { landingConfig as correosProfesionalesConfig } from "../app/landings/cor
 import { landingConfig as iaDesdeCeroConfig } from "../app/landings/ia-desde-cero/config.ts";
 import { landingConfig as iaMaestrosConfig } from "../app/landings/ia-maestros/config.ts";
 import { landingConfig as tareasConIaConfig } from "../app/landings/tareas-con-ia/config.ts";
+import { landingConfig as excelConIaConfig } from "../app/landings/excel-con-inteligencia-artificial/config.ts";
 import type { CampaignSlug } from "./landings.ts";
 
 type LandingWhatsAppConfig = {
@@ -13,6 +14,7 @@ const configs = {
   "ia-maestros": iaMaestrosConfig,
   "tareas-con-ia": tareasConIaConfig,
   "correos-profesionales-con-ia": correosProfesionalesConfig,
+  "excel-con-inteligencia-artificial": excelConIaConfig,
 } satisfies Record<CampaignSlug, LandingWhatsAppConfig>;
 
 export function getLandingWhatsAppConfig(slug: CampaignSlug) {

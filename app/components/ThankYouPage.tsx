@@ -6,25 +6,30 @@ import type { RegistrationToken } from "@/lib/registration";
 import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
 
 export function ThankYouPage({ campaign, registration }: { campaign: LandingCampaign; registration: RegistrationToken | null }) {
+  const requiresWhatsAppCompletion = campaign.slug === "excel-con-inteligencia-artificial";
   useEffect(() => {
-    if (!registration) return;
+    if (!registration && !requiresWhatsAppCompletion) return;
     // El id del registro forma parte de la clave persistente: recargar o abrir
-    // otra pestaña no vuelve a enviar CompleteRegistration para el mismo registro.
-    return trackMetaEventWhenReady("CompleteRegistration", `${campaign.slug}:${registration.registrationId}`, { content_name: campaign.integrations.metaContentName, content_category: "Registro ActiveCampaign", status: "completed", value: 0, currency: "MXN" });
-  }, [campaign.integrations.metaContentName, campaign.slug, registration]);
+    // otra pestaña no vuelve a enviar la conversión para el mismo registro.
+    const scope = registration ? `${campaign.slug}:${registration.registrationId}` : campaign.slug;
+    return trackMetaEventWhenReady(campaign.conversionEvent ?? "CompleteRegistration", scope, { content_name: campaign.integrations.metaContentName, content_category: "Registro ActiveCampaign", status: "completed", value: 0, currency: "MXN" });
+  }, [campaign.conversionEvent, campaign.integrations.metaContentName, campaign.slug, registration, requiresWhatsAppCompletion]);
 
-  if (!registration) return <InvalidThankYou campaign={campaign} />;
+  if (!registration && !requiresWhatsAppCompletion) return <InvalidThankYou campaign={campaign} />;
   const event = campaign.event;
-  return <main className="thanks-flow" data-campaign={campaign.slug}>
+  const whatsappHref = requiresWhatsAppCompletion
+    ? `/landings/${campaign.slug}/api/whatsapp/redirect`
+    : `/landings/${campaign.slug}/unirse-whatsapp`;
+  return <main className={`thanks-flow${requiresWhatsAppCompletion ? " thanks-flow--excel" : ""}`} data-campaign={campaign.slug}>
     <div className="thanks-background" aria-hidden="true" />
     <div className="shell thanks-container"><section className="thanks-panel">
       <p className="thanks-progress">PASO 2 DE 2 · ÚLTIMO PASO <span /></p>
+      {requiresWhatsAppCompletion && <><a className="whatsapp-button thanks-primary-action" href={whatsappHref}><WhatsAppIcon />ENTRAR AL GRUPO Y COMPLETAR MI ACCESO</a><p className="thanks-button-note">En WhatsApp, toca “Unirme al grupo” para terminar.</p></>}
       <div className="thanks-check" aria-hidden="true"><CheckIcon /></div>
-      <h1>{campaign.thanks.title}</h1>
-      <p className="thanks-lead"><strong>{campaign.thanks.message}</strong><br />Entra ahora al grupo oficial para recibir el enlace de acceso, los recordatorios y los avisos importantes de la clase del {event.displayDate}.</p>
-      <a className="whatsapp-button" href={`/landings/${campaign.slug}/unirse-whatsapp`}><WhatsAppIcon />{campaign.thanks.actionLabel}</a>
-      <p className="thanks-button-note">Cuando se abra WhatsApp, toca “Unirme al grupo” para terminar.</p>
-      <div className="thanks-alert"><strong>Tu proceso todavía no está completo.</strong> WhatsApp será el canal oficial de comunicación para esta clase.</div>
+      <h1>{requiresWhatsAppCompletion ? "Aún falta un paso para completar tu acceso" : campaign.thanks.title}</h1>
+      <p className="thanks-lead"><strong>{campaign.thanks.message}</strong><br />{requiresWhatsAppCompletion ? "El enlace de la clase, los recordatorios y los avisos importantes se compartirán únicamente en el grupo oficial de WhatsApp." : `Entra ahora al grupo oficial para recibir el enlace de acceso, los recordatorios y los avisos importantes de la clase del ${event.displayDate}.`}</p>
+      {!requiresWhatsAppCompletion && <><a className="whatsapp-button" href={whatsappHref}><WhatsAppIcon />{campaign.thanks.actionLabel}</a><p className="thanks-button-note">Cuando se abra WhatsApp, toca “Unirme al grupo” para terminar.</p></>}
+      <div className="thanks-alert"><strong>Tu registro todavía no está completo.</strong> Para recibir tu acceso debes entrar al grupo y tocar “Unirme al grupo” en WhatsApp.</div>
       <div className="thanks-steps"><article className="is-current"><small>Fecha</small><p>{event.displayDate}</p></article><article><small>Hora</small><p>{event.displayTime} · {event.displayTimeZone}</p></article><article><small>Modalidad</small><p>En línea · registro gratuito</p></article></div>
     </section></div>
   </main>;

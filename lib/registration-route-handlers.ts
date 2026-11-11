@@ -66,7 +66,8 @@ export async function handleRegistrationNonce(request: Request) {
     if (
       body.landing !== "ia-desde-cero" &&
       body.landing !== "ia-maestros" &&
-      body.landing !== "correos-profesionales-con-ia"
+      body.landing !== "correos-profesionales-con-ia" &&
+      body.landing !== "excel-con-inteligencia-artificial"
     )
       return NextResponse.json({ ok: false }, { status: 400 });
     const nonce = createRegistrationNonce(body.landing);

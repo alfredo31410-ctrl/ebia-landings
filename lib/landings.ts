@@ -13,7 +13,8 @@ export type LandingCampaign = {
     | "ia-desde-cero"
     | "ia-maestros"
     | "tareas-con-ia"
-    | "correos-profesionales-con-ia";
+    | "correos-profesionales-con-ia"
+    | "excel-con-inteligencia-artificial";
   variant: CampaignVariant;
   seo: { title: string; description: string };
   topbar: string;
@@ -36,6 +37,8 @@ export type LandingCampaign = {
     activeCampaignFormId: string;
     metaContentName: string;
   };
+  /** Evento de Meta que representa un registro confirmado para esta campaña. */
+  conversionEvent?: "CompleteRegistration" | "Lead";
   event: {
     startsAt: string;
     displayDate: string;
@@ -351,6 +354,62 @@ export const campaigns = {
       role: "Instructora EBIA",
       bio: null,
     },
+  },
+  "excel-con-inteligencia-artificial": {
+    slug: "excel-con-inteligencia-artificial",
+    variant: "class",
+    seo: {
+      title: "Excel con Inteligencia Artificial | Clase gratuita",
+      description: "Aprende a crear y organizar archivos de Excel con ayuda de Inteligencia Artificial, aunque empieces desde cero.",
+    },
+    topbar: "Clase gratuita en línea",
+    eyebrow: "EXCEL + INTELIGENCIA ARTIFICIAL",
+    headline: "Aprende Excel con",
+    highlightedHeadline: "Inteligencia Artificial",
+    intro: "Convierte una idea en una herramienta de trabajo: organiza ingresos, gastos, clientes y pendientes sin complicarte con fórmulas.",
+    primaryCta: "REGÍSTRATE GRATIS",
+    secondaryCta: "Ver lo que aprenderás",
+    microcopy: "Martes 17 de noviembre · 1:00 p. m. CDMX · Sin costo",
+    facts: [
+      { label: "Fecha", value: "MARTES 17 DE NOVIEMBRE" },
+      { label: "Hora", value: "1:00 P. M." },
+      { label: "Zona", value: "HORA CDMX" },
+      { label: "Modalidad", value: "EN LÍNEA · GRATUITA" },
+    ],
+    image: {
+      src: "/landings/tareas-con-ia/instructora.webp",
+      alt: "Clase gratuita de Excel con Inteligencia Artificial de EBIA",
+      width: 1024,
+      height: 1535,
+    },
+    visualNotes: ["Desde cero", "Ejemplos prácticos"],
+    section: {
+      eyebrow: "LO QUE APRENDERÁS",
+      title: "Crea archivos útiles para organizar mejor tu trabajo",
+      outcomes: [
+        { title: "Pide lo que necesitas", description: "Aprende a explicarle a la IA qué archivo quieres crear y para qué lo vas a usar." },
+        { title: "Organiza tu información", description: "Construye tablas para ingresos, gastos, ventas, clientes y pagos pendientes." },
+        { title: "Automatiza con claridad", description: "Obtén cálculos, reportes y alertas sin memorizar fórmulas complicadas." },
+      ],
+    },
+    // Pendiente: sustituir cuando EBIA comparta el embed de ActiveCampaign.
+    integrations: { activeCampaignFormId: "389", metaContentName: "Excel con Inteligencia Artificial" },
+    conversionEvent: "Lead",
+    event: {
+      startsAt: "2026-11-17T13:00:00-06:00",
+      displayDate: "martes 17 de noviembre de 2026",
+      displayTime: "1:00 p. m.",
+      displayTimeZone: "hora CDMX",
+      endsAt: null,
+      registrationClosesAt: null,
+      timeZone: "America/Mexico_City",
+    },
+    thanks: {
+      title: "Tu registro está confirmado",
+      message: "Tus datos fueron guardados correctamente.",
+      actionLabel: "COMPLETAR MI ACCESO EN WHATSAPP",
+    },
+    instructor: { name: "Equipo EBIA", role: "Instructores EBIA", bio: null },
   },
 } satisfies Record<string, LandingCampaign>;
 

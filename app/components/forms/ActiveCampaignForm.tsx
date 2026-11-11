@@ -26,13 +26,16 @@ export function ActiveCampaignForm({
   confirmationPath,
   showIntro = true,
 }: Props) {
+  // ActiveCampaign confirma el envío y redirige esta campaña directamente.
+  // No añadimos una preparación previa que pueda bloquear el formulario.
+  const requiresNonce = campaign !== "excel-con-inteligencia-artificial";
   const root = useRef<HTMLDivElement>(null);
   const nonce = useRef<RegistrationNonceResponse | null>(null);
   const nonceRequest = useRef<Promise<RegistrationNonceResponse> | null>(null);
   const nonceTimer = useRef<number | undefined>(undefined);
   const nonceReady = useRef(false);
   const [error, setError] = useState<string | null>(null);
-  const [isPreparing, setIsPreparing] = useState(true);
+  const [isPreparing, setIsPreparing] = useState(requiresNonce);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const syncControls = (disabled: boolean) => {
@@ -67,7 +70,8 @@ export function ActiveCampaignForm({
   useEffect(() => {
     if (
       campaign === "ia-maestros" ||
-      campaign === "correos-profesionales-con-ia"
+      campaign === "correos-profesionales-con-ia" ||
+      campaign === "excel-con-inteligencia-artificial"
     )
       persistAttributionCookie();
   }, [campaign]);
@@ -88,6 +92,11 @@ export function ActiveCampaignForm({
   }, [confirmationPath]);
 
   useEffect(() => {
+    if (!requiresNonce) {
+      nonceReady.current = true;
+      setIsPreparing(false);
+      return;
+    }
     const scheduleRenewal = () => {
       if (nonceTimer.current) window.clearTimeout(nonceTimer.current);
       if (!nonce.current) return;
@@ -96,15 +105,15 @@ export function ActiveCampaignForm({
     };
     void refreshNonce().then(scheduleRenewal).catch(() => undefined);
     return () => { if (nonceTimer.current) window.clearTimeout(nonceTimer.current); };
-  }, [campaign]);
+  }, [campaign, requiresNonce]);
 
   useEffect(() => {
     const element = root.current;
     if (!element) return;
-    const applyState = () => syncControls(isPreparing || isSubmitting || !nonceReady.current);
+    const applyState = () => syncControls(isSubmitting || (requiresNonce && (isPreparing || !nonceReady.current)));
     const lockForm = (event: Event) => {
       const current = nonce.current;
-      if (!current || new Date(current.expiresAt).getTime() <= Date.now()) {
+      if (requiresNonce && (!current || new Date(current.expiresAt).getTime() <= Date.now())) {
         event.preventDefault();
         nonceReady.current = false;
         setError("No pudimos preparar el formulario. Revisa tu conexión e inténtalo nuevamente.");
@@ -115,22 +124,25 @@ export function ActiveCampaignForm({
       // y su redirección posterior hacia registro-confirmado.
       if (
         campaign === "ia-maestros" ||
-        campaign === "correos-profesionales-con-ia"
+        campaign === "correos-profesionales-con-ia" ||
+        campaign === "excel-con-inteligencia-artificial"
       )
         persistAttributionCookie();
-      trackMetaEventWhenReady(
-        "RegistrationStart",
-        campaign,
-        {
-          content_name: metaContentName,
-          content_category: "Formulario ActiveCampaign",
-          trigger: "form_submit",
-        },
-        "session",
-      );
+      if (campaign !== "excel-con-inteligencia-artificial") {
+        trackMetaEventWhenReady(
+          "RegistrationStart",
+          campaign,
+          {
+            content_name: metaContentName,
+            content_category: "Formulario ActiveCampaign",
+            trigger: "form_submit",
+          },
+          "session",
+        );
+      }
       setError(null);
       setIsSubmitting(true);
-      resetTrackedMetaEvent("CompleteRegistration", campaign, "session");
+      resetTrackedMetaEvent(campaign === "excel-con-inteligencia-artificial" ? "Lead" : "CompleteRegistration", campaign, "session");
       applyState();
     };
     const observer = new MutationObserver(applyState);
@@ -138,12 +150,12 @@ export function ActiveCampaignForm({
     element.addEventListener("submit", lockForm, true);
     applyState();
     return () => { observer.disconnect(); element.removeEventListener("submit", lockForm, true); };
-  }, [campaign, isPreparing, isSubmitting, metaContentName]);
+  }, [campaign, isPreparing, isSubmitting, metaContentName, requiresNonce]);
 
   return <>
     {showIntro && <><p className="form-step" aria-live="polite">PASO 1 DE 2</p>
     <p className="form-instruction">Después de guardar tus datos pasarás al último paso: entrar al grupo oficial de WhatsApp.</p></>}
-    {error && <><p className="form-error" role="alert">{error}</p><button className="form-retry" type="button" onClick={() => void refreshNonce().catch(() => undefined)} disabled={isPreparing}>REINTENTAR PREPARACIÓN</button></>}
+    {requiresNonce && error && <><p className="form-error" role="alert">{error}</p><button className="form-retry" type="button" onClick={() => void refreshNonce().catch(() => undefined)} disabled={isPreparing}>REINTENTAR PREPARACIÓN</button></>}
     {isSubmitting && <p className="form-status" role="status">Procesando tu registro…</p>}
     <div ref={root} className={`${getActiveCampaignClassName(formId)} active-campaign-form`} aria-busy={isPreparing || isSubmitting} />
     <Script id={`active-campaign-form-${formId}`} src={getActiveCampaignEmbedUrl(formId)} strategy="afterInteractive" charSet="utf-8" />
