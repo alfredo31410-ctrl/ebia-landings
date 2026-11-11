@@ -24,10 +24,10 @@ export function ThankYouPage({ campaign, registration }: { campaign: LandingCamp
     <div className="thanks-background" aria-hidden="true" />
     <div className="shell thanks-container"><section className="thanks-panel">
       <p className="thanks-progress">PASO 2 DE 2 · ÚLTIMO PASO <span /></p>
-      {requiresWhatsAppCompletion && <><a className="whatsapp-button thanks-primary-action" href={whatsappHref}><WhatsAppIcon />ENTRAR AL GRUPO Y COMPLETAR MI ACCESO</a><p className="thanks-button-note">En WhatsApp, toca “Unirme al grupo” para terminar.</p></>}
       <div className="thanks-check" aria-hidden="true"><CheckIcon /></div>
       <h1>{requiresWhatsAppCompletion ? "Aún falta un paso para completar tu acceso" : campaign.thanks.title}</h1>
       <p className="thanks-lead"><strong>{campaign.thanks.message}</strong><br />{requiresWhatsAppCompletion ? "El enlace de la clase, los recordatorios y los avisos importantes se compartirán únicamente en el grupo oficial de WhatsApp." : `Entra ahora al grupo oficial para recibir el enlace de acceso, los recordatorios y los avisos importantes de la clase del ${event.displayDate}.`}</p>
+      {requiresWhatsAppCompletion && <><a className="whatsapp-button thanks-primary-action" href={whatsappHref}><WhatsAppIcon />ENTRAR AL GRUPO Y COMPLETAR MI ACCESO</a><p className="thanks-button-note">En WhatsApp, toca “Unirme al grupo” para terminar.</p></>}
       {!requiresWhatsAppCompletion && <><a className="whatsapp-button" href={whatsappHref}><WhatsAppIcon />{campaign.thanks.actionLabel}</a><p className="thanks-button-note">Cuando se abra WhatsApp, toca “Unirme al grupo” para terminar.</p></>}
       <div className="thanks-alert"><strong>Tu registro todavía no está completo.</strong> Para recibir tu acceso debes entrar al grupo y tocar “Unirme al grupo” en WhatsApp.</div>
       <div className="thanks-steps"><article className="is-current"><small>Fecha</small><p>{event.displayDate}</p></article><article><small>Hora</small><p>{event.displayTime} · {event.displayTimeZone}</p></article><article><small>Modalidad</small><p>En línea · registro gratuito</p></article></div>
@@ -43,5 +43,5 @@ function InvalidThankYou({ campaign }: { campaign: LandingCampaign }) {
   </section></div></main>;
 }
 
-function CheckIcon() { return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.6 2.6L16.5 9" /></svg>; }
+function CheckIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.6 2.6L16.5 9" /></svg>; }
 function WhatsAppIcon() { return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7c1.7.9 3.6 1.4 5.5 1.4 6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.2-3.5-8.4Zm-8.3 18.2c-1.7 0-3.4-.5-4.9-1.3l-.4-.2-3.9 1 1-3.8-.2-.4a9.7 9.7 0 1 1 8.4 4.7Zm5.3-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3 .9 4.1.8 1.3-.2 1.7-1 1.9-1.9.2-.9.2-1.6.1-1.8-.2-.1-.5-.2-.8-.3Z" /></svg>; }
