@@ -369,9 +369,9 @@ export const campaigns = {
     intro: "Convierte una idea en una herramienta de trabajo: organiza ingresos, gastos, clientes y pendientes sin complicarte con fórmulas.",
     primaryCta: "REGÍSTRATE GRATIS",
     secondaryCta: "Ver lo que aprenderás",
-    microcopy: "Martes 17 de noviembre · 1:00 p. m. CDMX · Sin costo",
+    microcopy: "Martes 24 de noviembre · 1:00 p. m. CDMX · Sin costo",
     facts: [
-      { label: "Fecha", value: "MARTES 17 DE NOVIEMBRE" },
+      { label: "Fecha", value: "MARTES 24 DE NOVIEMBRE" },
       { label: "Hora", value: "1:00 P. M." },
       { label: "Zona", value: "HORA CDMX" },
       { label: "Modalidad", value: "EN LÍNEA · GRATUITA" },
@@ -392,12 +392,11 @@ export const campaigns = {
         { title: "Automatiza con claridad", description: "Obtén cálculos, reportes y alertas sin memorizar fórmulas complicadas." },
       ],
     },
-    // Pendiente: sustituir cuando EBIA comparta el embed de ActiveCampaign.
-    integrations: { activeCampaignFormId: "389", metaContentName: "Excel con Inteligencia Artificial" },
+    integrations: { activeCampaignFormId: "400", metaContentName: "Excel con Inteligencia Artificial desde Cero - Clase Gratis" },
     conversionEvent: "Lead",
     event: {
-      startsAt: "2026-11-17T13:00:00-06:00",
-      displayDate: "martes 17 de noviembre de 2026",
+      startsAt: "2026-11-24T13:00:00-06:00",
+      displayDate: "martes 24 de noviembre de 2026",
       displayTime: "1:00 p. m.",
       displayTimeZone: "hora CDMX",
       endsAt: null,
