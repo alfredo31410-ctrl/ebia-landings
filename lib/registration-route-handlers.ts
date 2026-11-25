@@ -67,6 +67,7 @@ export async function handleRegistrationNonce(request: Request) {
       body.landing !== "ia-desde-cero" &&
       body.landing !== "ia-maestros" &&
       body.landing !== "correos-profesionales-con-ia" &&
+      body.landing !== "libro-con-ia" &&
       body.landing !== "excel-con-inteligencia-artificial"
     )
       return NextResponse.json({ ok: false }, { status: 400 });

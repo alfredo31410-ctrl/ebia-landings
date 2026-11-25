@@ -9,6 +9,7 @@ export async function requestRegistrationNonce(landing: string): Promise<Registr
     landing !== "ia-maestros" &&
     landing !== "tareas-con-ia" &&
     landing !== "correos-profesionales-con-ia"
+    && landing !== "libro-con-ia"
   )
     throw new Error("unsupported_landing");
   const response = await fetch(

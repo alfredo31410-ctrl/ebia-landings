@@ -72,6 +72,7 @@ export function ActiveCampaignForm({
     if (
       campaign === "ia-maestros" ||
       campaign === "correos-profesionales-con-ia" ||
+      campaign === "libro-con-ia" ||
       campaign === "excel-con-inteligencia-artificial"
     )
       persistAttributionCookie();
@@ -138,6 +139,7 @@ export function ActiveCampaignForm({
       if (
         campaign === "ia-maestros" ||
         campaign === "correos-profesionales-con-ia" ||
+        campaign === "libro-con-ia" ||
         campaign === "excel-con-inteligencia-artificial"
       )
         persistAttributionCookie();
