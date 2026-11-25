@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Brand } from "@/app/components/Brand";
 import { ActiveCampaignForm } from "@/app/components/forms/ActiveCampaignForm";
-import { trackMetaEventWhenReady } from "@/lib/integrations/meta-pixel";
 import styles from "./page.module.css";
 
 const learnings = [
@@ -23,7 +22,6 @@ function Arrow() {
 }
 
 export function LibroConIaLanding() {
-  useEffect(() => trackMetaEventWhenReady("ViewContent", "libro-con-ia", { content_name: "Tu primer libro con IA", content_category: "Clase gratuita" }), []);
   const showForm = useCallback(() => {
     document.getElementById("registro")?.scrollIntoView({
       behavior: "smooth",
