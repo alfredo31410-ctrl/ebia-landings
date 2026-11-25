@@ -12,5 +12,5 @@ export default function Page() {
     if (body.shouldTrackCompleteRegistration) trackMetaEventWhenReady("CompleteRegistration", `libro-con-ia:${body.registrationId}`, { content_name: "Tu primer libro con IA", content_category: "Registro ActiveCampaign", status: "completed" }, "persistent");
     setReady(true);
   }); }, []);
-  return <main className={styles.page}><header><Brand inverse /></header><section className={styles.card} aria-live="polite"><p>CLASE GRATUITA · TU PRIMER LIBRO CON IA</p><span>✓</span><h1>{ready ? "Tu registro está confirmado" : "Confirmando tu registro…"}</h1>{ready && <><p>Ya tienes tu lugar. Entra al grupo oficial para recibir el enlace de la clase y los recordatorios.</p><a href="https://chat.whatsapp.com/LRLf4nFVK6RIxyFljQniDw">ENTRAR AL GRUPO DE WHATSAPP →</a></>}</section></main>;
+  return <main className={styles.page}><header><Brand inverse /></header><section className={styles.card} aria-live="polite"><p>CLASE GRATUITA · TU PRIMER LIBRO CON IA</p><span>✓</span><h1>{ready ? "Falta un paso para completar tu acceso" : "Confirmando tu registro…"}</h1>{ready && <><p>Tus datos ya se guardaron. Entra al grupo oficial de WhatsApp para completar tu acceso y recibir el enlace de la clase y los recordatorios.</p><a href="https://chat.whatsapp.com/LRLf4nFVK6RIxyFljQniDw">COMPLETAR MI ACCESO EN WHATSAPP →</a></>}</section></main>;
 }
