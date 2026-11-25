@@ -143,7 +143,10 @@ export function ActiveCampaignForm({
         campaign === "excel-con-inteligencia-artificial"
       )
         persistAttributionCookie();
-      if (campaign !== "excel-con-inteligencia-artificial") {
+      if (
+        campaign !== "excel-con-inteligencia-artificial" &&
+        campaign !== "libro-con-ia"
+      ) {
         trackMetaEventWhenReady(
           "RegistrationStart",
           campaign,
