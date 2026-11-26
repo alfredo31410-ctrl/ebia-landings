@@ -40,7 +40,7 @@ export function LibroConIaLanding() {
             <p className={styles.eyebrow}>ESCRITURA + INTELIGENCIA ARTIFICIAL</p>
             <h1>Tu primer libro <em>con IA</em></h1>
             <p className={styles.lead}>Crear tu libro puede ser más fácil con IA: organiza tus ideas, estructura tu historia y empieza a escribir sin perder tu voz.</p>
-            <div className={styles.eventInfo}><span><b>FECHA</b>Martes 1 de diciembre de 2026</span><span><b>HORA</b>1:00 p. m. · hora CDMX</span><span><b>IMPARTE</b>Miranda Medina · Instructora EBIA</span></div>
+            <div className={styles.eventInfo}><span><b>FECHA</b>Martes 1 de diciembre de 2026</span><span><b>HORA</b>1:00 p. m. · hora CDMX</span><span><b>IMPARTE</b>Celic Calvillo · Instructora EBIA</span></div>
             <div className={styles.actions}><button className={styles.primary} onClick={showForm}>REGISTRARME GRATIS <Arrow /></button><span>En línea · Sin costo · Para escritores en cualquier etapa</span></div>
           </div>
           <div className={styles.heroVisual} aria-label="Una página de manuscrito con anotaciones editoriales">
